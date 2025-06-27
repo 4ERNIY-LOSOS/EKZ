@@ -12,9 +12,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextIntegerInput;
+    private EditText editTextArrayInput;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -25,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextIntegerInput = findViewById(R.id.editTextIntegerInput);
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -38,60 +42,62 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reverseNumberDigits();
+                performBubbleSort();
             }
         });
     }
 
-    private void reverseNumberDigits() {
-        String strInput = editTextIntegerInput.getText().toString();
-
-        if (strInput.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите число.");
+    private void performBubbleSort() {
+        String inputText = editTextArrayInput.getText().toString();
+        if (inputText.isEmpty()) {
+            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
             return;
         }
 
-        // Проверка на наличие только знака "-"
-        if (strInput.equals("-")) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        String[] stringArray = inputText.split("[,\\s]+"); // Разделение по запятым и/или пробелам
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+             textViewResult.setText("Результат: Введите числа для сортировки.");
             return;
         }
 
-        try {
-            long number = Long.parseLong(strInput);
-            long originalNumber = number; // Сохраняем для вывода
-            long reversedNumber = 0;
-            boolean isNegative = false;
-
-            if (number == 0) {
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Реверс числа %d = 0", originalNumber));
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue; // Пропускаем пустые строки после разделения
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа через запятую или пробел.", s));
                 return;
             }
-
-            if (number < 0) {
-                isNegative = true;
-                number = -number; // Работаем с положительным числом для реверса
-            }
-
-            while (number > 0) {
-                long digit = number % 10;
-                // Проверка на переполнение перед умножением
-                if (reversedNumber > (Long.MAX_VALUE - digit) / 10) {
-                    textViewResult.setText("Результат: Переполнение при реверсе числа.");
-                    return;
-                }
-                reversedNumber = reversedNumber * 10 + digit;
-                number /= 10;
-            }
-
-            if (isNegative) {
-                reversedNumber = -reversedNumber;
-            }
-
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Реверс числа %d = %d", originalNumber, reversedNumber));
-
-        } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
         }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+
+        // Алгоритм сортировки пузырьком
+        int n = numbers.length;
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (numbers[j] > numbers[j + 1]) {
+                    // Обмен значениями
+                    int temp = numbers[j];
+                    numbers[j] = numbers[j + 1];
+                    numbers[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            // Если во внутреннем цикле не было обменов, массив уже отсортирован
+            if (!swapped) {
+                break;
+            }
+        }
+
+        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
     }
 }

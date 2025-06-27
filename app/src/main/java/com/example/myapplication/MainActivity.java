@@ -12,9 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextIntegerInput; // Изменено с editTextArrayInput
+    private EditText editTextFibonacciCount;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -25,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextIntegerInput = findViewById(R.id.editTextIntegerInput); // Изменено
+        editTextFibonacciCount = findViewById(R.id.editTextFibonacciCount);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -38,77 +41,62 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                swapFirstAndLastDigits(); // Изменен вызов метода
+                generateFibonacciSequence();
             }
         });
     }
 
-    private void swapFirstAndLastDigits() {
-        String strInput = editTextIntegerInput.getText().toString();
+    private void generateFibonacciSequence() {
+        String strN = editTextFibonacciCount.getText().toString();
 
-        if (strInput.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите число.");
-            return;
-        }
-        if (strInput.equals("-")) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        if (strN.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите количество чисел.");
             return;
         }
 
         try {
-            long number = Long.parseLong(strInput);
-            long originalNumber = number;
-            boolean isNegative = false;
+            int n = Integer.parseInt(strN);
 
-            if (number < 0) {
-                isNegative = true;
-                number = -number; // Работаем с положительным числом
+            if (n < 0) {
+                textViewResult.setText("Результат: Количество чисел не может быть отрицательным.");
+                return;
             }
-
-            if (number < 10) { // Однозначные числа (включая 0, если не было знака минус) не меняются
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d (не изменилось)", originalNumber));
+            if (n == 0) {
+                textViewResult.setText("Результат: Последовательность пуста (0 чисел).");
+                return;
+            }
+            // Ограничение, чтобы избежать слишком больших чисел и долгого вывода
+            // Число Фибоначчи F(93) уже превышает Long.MAX_VALUE
+            if (n > 92) {
+                textViewResult.setText("Результат: Слишком большое N. Пожалуйста, введите N <= 92, чтобы избежать переполнения long.");
                 return;
             }
 
-            long lastDigit = number % 10;
-            long powerOf10 = 1;
-            long temp = number;
-            while (temp >= 10) {
-                temp /= 10;
-                powerOf10 *= 10;
+
+            List<Long> fibonacciSequence = new ArrayList<>();
+            if (n >= 1) {
+                fibonacciSequence.add(0L);
             }
-            long firstDigit = number / powerOf10;
-
-            // Если число состоит только из двух цифр, powerOf10 будет 10.
-            // (number % powerOf10) будет lastDigit. (number % powerOf10) / 10 будет 0.
-            // Пример: 78. powerOf10 = 10. lastDigit = 8. firstDigit = 7.
-            // middlePart = (78 % 10) / 10 = 8 / 10 = 0.
-            // newNumber = 8 * 10 + 0 * 10 + 7 = 80 + 0 + 7 = 87. Корректно.
-
-            // Пример: 123. powerOf10 = 100. lastDigit = 3. firstDigit = 1.
-            // middlePart = (123 % 100) / 10 = 23 / 10 = 2.
-            // newNumber = 3 * 100 + 2 * 10 + 1 = 300 + 20 + 1 = 321. Корректно.
-
-            long middlePartWithLastDigit = number % powerOf10; // число без первой цифры
-            long middlePart = middlePartWithLastDigit / 10;    // число без первой и последней цифры
-
-            long newNumber = lastDigit * powerOf10 + middlePart * 10 + firstDigit;
-
-            // Проверка на случай, если powerOf10 == 1 (однозначное число), но мы уже обработали это через number < 10
-            // Для двузначных чисел: firstDigit * 10 + lastDigit.
-            // lastDigit * powerOf10 (powerOf10=10) + firstDigit. (middlePart = 0)
-            // 78 -> 8*10 + 0*10 + 7 = 87.
-            // Если число, например, 10. last=0, p10=10, first=1. middle=(10%10)/10 = 0. new = 0*10+0*10+1 = 1.
-            // Это правильно, 10 -> 01, т.е. 1.
-
-            if (isNegative) {
-                newNumber = -newNumber;
+            if (n >= 2) {
+                fibonacciSequence.add(1L);
             }
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Исходное: %d, Новое: %d", originalNumber, newNumber));
+            for (int i = 2; i < n; i++) {
+                long nextFib = fibonacciSequence.get(i - 1) + fibonacciSequence.get(i - 2);
+                fibonacciSequence.add(nextFib);
+            }
+
+            StringBuilder sb = new StringBuilder("Результат: ");
+            for (int i = 0; i < fibonacciSequence.size(); i++) {
+                sb.append(fibonacciSequence.get(i));
+                if (i < fibonacciSequence.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+            textViewResult.setText(sb.toString());
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число для N.");
         }
     }
 }

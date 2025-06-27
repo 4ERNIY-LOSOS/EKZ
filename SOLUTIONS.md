@@ -1205,6 +1205,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText editTextInt1;
@@ -1931,6 +1934,176 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+## Задание 12: Числа Фибоначчи
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 12: Числа Фибоначчи"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextFibonacciCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Количество чисел Фибоначчи (N)"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сгенерировать"
+        app:layout_constraintTop_toBottomOf="@id/editTextFibonacciCount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextFibonacciCount;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextFibonacciCount = findViewById(R.id.editTextFibonacciCount);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateFibonacciSequence();
+            }
+        });
+    }
+
+    private void generateFibonacciSequence() {
+        String strN = editTextFibonacciCount.getText().toString();
+
+        if (strN.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите количество чисел.");
+            return;
+        }
+
+        try {
+            int n = Integer.parseInt(strN);
+
+            if (n < 0) {
+                textViewResult.setText("Результат: Количество чисел не может быть отрицательным.");
+                return;
+            }
+            if (n == 0) {
+                textViewResult.setText("Результат: Последовательность пуста (0 чисел).");
+                return;
+            }
+            // Ограничение, чтобы избежать слишком больших чисел и долгого вывода
+            // Число Фибоначчи F(93) уже превышает Long.MAX_VALUE
+            if (n > 92) {
+                textViewResult.setText("Результат: Слишком большое N. Пожалуйста, введите N <= 92, чтобы избежать переполнения long.");
+                return;
+            }
+
+
+            List<Long> fibonacciSequence = new ArrayList<>();
+            if (n >= 1) {
+                fibonacciSequence.add(0L);
+            }
+            if (n >= 2) {
+                fibonacciSequence.add(1L);
+            }
+
+            for (int i = 2; i < n; i++) {
+                long nextFib = fibonacciSequence.get(i - 1) + fibonacciSequence.get(i - 2);
+                fibonacciSequence.add(nextFib);
+            }
+
+            StringBuilder sb = new StringBuilder("Результат: ");
+            for (int i = 0; i < fibonacciSequence.size(); i++) {
+                sb.append(fibonacciSequence.get(i));
+                if (i < fibonacciSequence.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+            textViewResult.setText(sb.toString());
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число для N.");
         }
     }
 }

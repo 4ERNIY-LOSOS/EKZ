@@ -918,3 +918,197 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 }
 ```
+
+## Задание 6: НОД трех чисел
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 6: НОД трех чисел"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextInt1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 1"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextInt2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 2"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextInt3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 3"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить НОД"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextInt1;
+    private EditText editTextInt2;
+    private EditText editTextInt3;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextInt1 = findViewById(R.id.editTextInt1);
+        editTextInt2 = findViewById(R.id.editTextInt2);
+        editTextInt3 = findViewById(R.id.editTextInt3);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateGCDofThreeNumbers();
+            }
+        });
+    }
+
+    // Метод для вычисления НОД двух чисел (алгоритм Евклида)
+    private int gcd(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    private void calculateGCDofThreeNumbers() {
+        String strInt1 = editTextInt1.getText().toString();
+        String strInt2 = editTextInt2.getText().toString();
+        String strInt3 = editTextInt3.getText().toString();
+
+        if (strInt1.isEmpty() || strInt2.isEmpty() || strInt3.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три числа.");
+            return;
+        }
+
+        try {
+            int num1 = Integer.parseInt(strInt1);
+            int num2 = Integer.parseInt(strInt2);
+            int num3 = Integer.parseInt(strInt3);
+
+            if (num1 == 0 && num2 == 0 && num3 == 0) {
+                textViewResult.setText("Результат: НОД(0,0,0) не определен (или 0 по соглашению). Введите хотя бы одно ненулевое число.");
+                return;
+            }
+
+            // НОД(a, b, c) = НОД(НОД(a, b), c)
+            // Также НОД(0, x) = |x|
+            int resultGcd;
+            if (num1 == 0 && num2 == 0) {
+                resultGcd = Math.abs(num3);
+            } else if (num1 == 0 && num3 == 0) {
+                resultGcd = Math.abs(num2);
+            } else if (num2 == 0 && num3 == 0) {
+                resultGcd = Math.abs(num1);
+            } else {
+                 resultGcd = gcd(gcd(num1, num2), num3);
+            }
+
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОД(%d, %d, %d) = %d", num1, num2, num3, resultGcd));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");
+        }
+    }
+}
+```

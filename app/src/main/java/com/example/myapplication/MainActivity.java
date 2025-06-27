@@ -12,14 +12,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextNumber1;
-    private EditText editTextNumber2;
-    private Button buttonAdd;
-    private Button buttonSubtract;
-    private Button buttonMultiply;
-    private Button buttonDivide;
+    private EditText editTextInt1;
+    private EditText editTextInt2;
+    private EditText editTextInt3;
+    private Button buttonCalculate;
     private TextView textViewResult;
 
     @Override
@@ -29,12 +27,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextNumber1 = findViewById(R.id.editTextNumber1);
-        editTextNumber2 = findViewById(R.id.editTextNumber2);
-        buttonAdd = findViewById(R.id.buttonAdd);
-        buttonSubtract = findViewById(R.id.buttonSubtract);
-        buttonMultiply = findViewById(R.id.buttonMultiply);
-        buttonDivide = findViewById(R.id.buttonDivide);
+        editTextInt1 = findViewById(R.id.editTextInt1);
+        editTextInt2 = findViewById(R.id.editTextInt2);
+        editTextInt3 = findViewById(R.id.editTextInt3);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -43,58 +39,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return insets;
         });
 
-        // Установка слушателей
-        buttonAdd.setOnClickListener(this);
-        buttonSubtract.setOnClickListener(this);
-        buttonMultiply.setOnClickListener(this);
-        buttonDivide.setOnClickListener(this);
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateGCDofThreeNumbers();
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        String strNum1 = editTextNumber1.getText().toString();
-        String strNum2 = editTextNumber2.getText().toString();
+    // Метод для вычисления НОД двух чисел (алгоритм Евклида)
+    private int gcd(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
 
-        if (strNum1.isEmpty() || strNum2.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
+    private void calculateGCDofThreeNumbers() {
+        String strInt1 = editTextInt1.getText().toString();
+        String strInt2 = editTextInt2.getText().toString();
+        String strInt3 = editTextInt3.getText().toString();
+
+        if (strInt1.isEmpty() || strInt2.isEmpty() || strInt3.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три числа.");
             return;
         }
 
         try {
-            double num1 = Double.parseDouble(strNum1);
-            double num2 = Double.parseDouble(strNum2);
-            double result = 0;
-            String operationSymbol = "";
+            int num1 = Integer.parseInt(strInt1);
+            int num2 = Integer.parseInt(strInt2);
+            int num3 = Integer.parseInt(strInt3);
 
-            int viewId = v.getId();
-            if (viewId == R.id.buttonAdd) {
-                result = num1 + num2;
-                operationSymbol = "+";
-            } else if (viewId == R.id.buttonSubtract) {
-                result = num1 - num2;
-                operationSymbol = "-";
-            } else if (viewId == R.id.buttonMultiply) {
-                result = num1 * num2;
-                operationSymbol = "*";
-            } else if (viewId == R.id.buttonDivide) {
-                if (num2 == 0) {
-                    textViewResult.setText("Результат: Деление на ноль невозможно.");
-                    return;
-                }
-                result = num1 / num2;
-                operationSymbol = "/";
+            if (num1 == 0 && num2 == 0 && num3 == 0) {
+                textViewResult.setText("Результат: НОД(0,0,0) не определен (или 0 по соглашению). Введите хотя бы одно ненулевое число.");
+                return;
             }
 
-            if (!operationSymbol.isEmpty()) {
-                 if (result == (long) result) { // Если результат - целое число
-                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d %s %d = %d", (long)num1, operationSymbol, (long)num2, (long)result));
-                } else { // Если результат - дробное число
-                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: %.2f %s %.2f = %.2f", num1, operationSymbol, num2, result));
-                }
+            // НОД(a, b, c) = НОД(НОД(a, b), c)
+            // Также НОД(0, x) = |x|
+            int resultGcd;
+            if (num1 == 0 && num2 == 0) {
+                resultGcd = Math.abs(num3);
+            } else if (num1 == 0 && num3 == 0) {
+                resultGcd = Math.abs(num2);
+            } else if (num2 == 0 && num3 == 0) {
+                resultGcd = Math.abs(num1);
+            } else {
+                 resultGcd = gcd(gcd(num1, num2), num3);
             }
+
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОД(%d, %d, %d) = %d", num1, num2, num3, resultGcd));
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");
         }
     }
 }

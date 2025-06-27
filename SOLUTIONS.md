@@ -1770,3 +1770,168 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
+## Задание 11: Перестановка первой и последней цифры
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 11: Перестановка первой и последней цифры"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextIntegerInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Введите целое число"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Переставить цифры"
+        app:layout_constraintTop_toBottomOf="@id/editTextIntegerInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextIntegerInput;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextIntegerInput = findViewById(R.id.editTextIntegerInput);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swapFirstAndLastDigits();
+            }
+        });
+    }
+
+    private void swapFirstAndLastDigits() {
+        String strInput = editTextIntegerInput.getText().toString();
+
+        if (strInput.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите число.");
+            return;
+        }
+        if (strInput.equals("-")) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+            return;
+        }
+
+        try {
+            long number = Long.parseLong(strInput);
+            long originalNumber = number;
+            boolean isNegative = false;
+
+            if (number < 0) {
+                isNegative = true;
+                number = -number; // Работаем с положительным числом
+            }
+
+            if (number < 10) { // Однозначные числа (включая 0, если не было знака минус) не меняются
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d (не изменилось)", originalNumber));
+                return;
+            }
+
+            long lastDigit = number % 10;
+            long powerOf10 = 1;
+            long temp = number;
+            while (temp >= 10) {
+                temp /= 10;
+                powerOf10 *= 10;
+            }
+            long firstDigit = number / powerOf10;
+
+            long middlePartWithLastDigit = number % powerOf10;
+            long middlePart = middlePartWithLastDigit / 10;
+
+            long newNumber = lastDigit * powerOf10 + middlePart * 10 + firstDigit;
+
+            if (isNegative) {
+                newNumber = -newNumber;
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Исходное: %d, Новое: %d", originalNumber, newNumber));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```

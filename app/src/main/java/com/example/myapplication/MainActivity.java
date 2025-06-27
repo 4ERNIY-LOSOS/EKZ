@@ -12,13 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextArrayInput;
+    private EditText editTextIntegerInput; // Изменено с editTextArrayInput
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -29,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        editTextIntegerInput = findViewById(R.id.editTextIntegerInput); // Изменено
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,62 +38,77 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performBubbleSort();
+                swapFirstAndLastDigits(); // Изменен вызов метода
             }
         });
     }
 
-    private void performBubbleSort() {
-        String inputText = editTextArrayInput.getText().toString();
-        if (inputText.isEmpty()) {
-            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
+    private void swapFirstAndLastDigits() {
+        String strInput = editTextIntegerInput.getText().toString();
+
+        if (strInput.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите число.");
+            return;
+        }
+        if (strInput.equals("-")) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
             return;
         }
 
-        String[] stringArray = inputText.split("[,\\s]+"); // Разделение по запятым и/или пробелам
-        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
-             textViewResult.setText("Результат: Введите числа для сортировки.");
-            return;
-        }
+        try {
+            long number = Long.parseLong(strInput);
+            long originalNumber = number;
+            boolean isNegative = false;
 
-        List<Integer> numbersList = new ArrayList<>();
-        for (String s : stringArray) {
-            if (s.trim().isEmpty()) continue; // Пропускаем пустые строки после разделения
-            try {
-                numbersList.add(Integer.parseInt(s.trim()));
-            } catch (NumberFormatException e) {
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа через запятую или пробел.", s));
+            if (number < 0) {
+                isNegative = true;
+                number = -number; // Работаем с положительным числом
+            }
+
+            if (number < 10) { // Однозначные числа (включая 0, если не было знака минус) не меняются
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d (не изменилось)", originalNumber));
                 return;
             }
-        }
 
-        if (numbersList.isEmpty()) {
-            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
-            return;
-        }
-
-        Integer[] numbers = numbersList.toArray(new Integer[0]);
-
-        // Алгоритм сортировки пузырьком
-        int n = numbers.length;
-        boolean swapped;
-        for (int i = 0; i < n - 1; i++) {
-            swapped = false;
-            for (int j = 0; j < n - 1 - i; j++) {
-                if (numbers[j] > numbers[j + 1]) {
-                    // Обмен значениями
-                    int temp = numbers[j];
-                    numbers[j] = numbers[j + 1];
-                    numbers[j + 1] = temp;
-                    swapped = true;
-                }
+            long lastDigit = number % 10;
+            long powerOf10 = 1;
+            long temp = number;
+            while (temp >= 10) {
+                temp /= 10;
+                powerOf10 *= 10;
             }
-            // Если во внутреннем цикле не было обменов, массив уже отсортирован
-            if (!swapped) {
-                break;
-            }
-        }
+            long firstDigit = number / powerOf10;
 
-        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
+            // Если число состоит только из двух цифр, powerOf10 будет 10.
+            // (number % powerOf10) будет lastDigit. (number % powerOf10) / 10 будет 0.
+            // Пример: 78. powerOf10 = 10. lastDigit = 8. firstDigit = 7.
+            // middlePart = (78 % 10) / 10 = 8 / 10 = 0.
+            // newNumber = 8 * 10 + 0 * 10 + 7 = 80 + 0 + 7 = 87. Корректно.
+
+            // Пример: 123. powerOf10 = 100. lastDigit = 3. firstDigit = 1.
+            // middlePart = (123 % 100) / 10 = 23 / 10 = 2.
+            // newNumber = 3 * 100 + 2 * 10 + 1 = 300 + 20 + 1 = 321. Корректно.
+
+            long middlePartWithLastDigit = number % powerOf10; // число без первой цифры
+            long middlePart = middlePartWithLastDigit / 10;    // число без первой и последней цифры
+
+            long newNumber = lastDigit * powerOf10 + middlePart * 10 + firstDigit;
+
+            // Проверка на случай, если powerOf10 == 1 (однозначное число), но мы уже обработали это через number < 10
+            // Для двузначных чисел: firstDigit * 10 + lastDigit.
+            // lastDigit * powerOf10 (powerOf10=10) + firstDigit. (middlePart = 0)
+            // 78 -> 8*10 + 0*10 + 7 = 87.
+            // Если число, например, 10. last=0, p10=10, first=1. middle=(10%10)/10 = 0. new = 0*10+0*10+1 = 1.
+            // Это правильно, 10 -> 01, т.е. 1.
+
+            if (isNegative) {
+                newNumber = -newNumber;
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Исходное: %d, Новое: %d", originalNumber, newNumber));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
     }
 }

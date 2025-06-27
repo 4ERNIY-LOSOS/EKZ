@@ -14,9 +14,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextSideA;
-    private EditText editTextSideB;
-    private EditText editTextSideC;
+    private EditText editTextCoefficientA;
+    private EditText editTextCoefficientB;
+    private EditText editTextCoefficientC;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextSideA = findViewById(R.id.editTextSideA);
-        editTextSideB = findViewById(R.id.editTextSideB);
-        editTextSideC = findViewById(R.id.editTextSideC);
+        editTextCoefficientA = findViewById(R.id.editTextCoefficientA);
+        editTextCoefficientB = findViewById(R.id.editTextCoefficientB);
+        editTextCoefficientC = findViewById(R.id.editTextCoefficientC);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,18 +42,18 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateTriangleArea();
+                calculateQuadraticEquationRoots();
             }
         });
     }
 
-    private void calculateTriangleArea() {
-        String strA = editTextSideA.getText().toString();
-        String strB = editTextSideB.getText().toString();
-        String strC = editTextSideC.getText().toString();
+    private void calculateQuadraticEquationRoots() {
+        String strA = editTextCoefficientA.getText().toString();
+        String strB = editTextCoefficientB.getText().toString();
+        String strC = editTextCoefficientC.getText().toString();
 
         if (strA.isEmpty() || strB.isEmpty() || strC.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
+            textViewResult.setText("Результат: Пожалуйста, введите все три коэффициента.");
             return;
         }
 
@@ -62,31 +62,37 @@ public class MainActivity extends AppCompatActivity {
             double b = Double.parseDouble(strB);
             double c = Double.parseDouble(strC);
 
-            if (a <= 0 || b <= 0 || c <= 0) {
-                textViewResult.setText("Результат: Стороны должны быть положительными числами.");
+            if (a == 0) {
+                // Это линейное уравнение bx + c = 0
+                if (b == 0) {
+                    if (c == 0) {
+                        textViewResult.setText("Результат: Бесконечное множество решений (0 = 0).");
+                    } else {
+                        textViewResult.setText("Результат: Решений нет (c = 0, где c != 0).");
+                    }
+                } else {
+                    double x = -c / b;
+                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: Линейное уравнение. Корень x = %.2f", x));
+                }
                 return;
             }
 
-            // Проверка неравенства треугольника
-            if (a + b <= c || a + c <= b || b + c <= a) {
-                textViewResult.setText("Результат: Сумма двух сторон должна быть больше третьей стороны.");
-                return;
-            }
+            // Вычисление дискриминанта
+            double discriminant = b * b - 4 * a * c;
 
-            // Вычисление полупериметра
-            double p = (a + b + c) / 2;
-
-            // Вычисление площади по формуле Герона
-            double area = Math.sqrt(p * (p - a) * (p - b) * (p - c));
-
-            if (Double.isNaN(area) || Double.isInfinite(area)) {
-                textViewResult.setText("Результат: Невозможно вычислить площадь с данными сторонами.");
+            if (discriminant > 0) {
+                double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Два корня: x1 = %.2f, x2 = %.2f", x1, x2));
+            } else if (discriminant == 0) {
+                double x = -b / (2 * a);
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Один корень: x = %.2f", x));
             } else {
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь = %.2f", area));
+                textViewResult.setText("Результат: Действительных корней нет (дискриминант < 0).");
             }
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для коэффициентов.");
         }
     }
 }

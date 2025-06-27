@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Задание 1: Площадь треугольника (Формула Герона)"
+        android:text="Задание 2: Корни квадратного уравнения"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,11 +21,11 @@
         android:layout_marginTop="16dp"/>
 
     <EditText
-        android:id="@+id/editTextSideA"
+        android:id="@+id/editTextCoefficientA"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Сторона a"
-        android:inputType="numberDecimal"
+        android:hint="Коэффициент a"
+        android:inputType="numberSigned|numberDecimal"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,24 +33,24 @@
         android:autofillHints="number" />
 
     <EditText
-        android:id="@+id/editTextSideB"
+        android:id="@+id/editTextCoefficientB"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Сторона b"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideA"
+        android:hint="Коэффициент b"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextCoefficientA"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         android:autofillHints="number" />
 
     <EditText
-        android:id="@+id/editTextSideC"
+        android:id="@+id/editTextCoefficientC"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Сторона c"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideB"
+        android:hint="Коэффициент c"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextCoefficientB"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
@@ -60,8 +60,8 @@
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Вычислить"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideC"
+        android:text="Вычислить корни"
+        app:layout_constraintTop_toBottomOf="@id/editTextCoefficientC"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>

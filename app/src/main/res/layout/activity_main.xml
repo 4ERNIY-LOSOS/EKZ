@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Задание 14: Последовательный поиск"
+        android:text="Задание 15: Сортировка вставкой"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +24,7 @@
         android:id="@+id/editTextArrayInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Массив чисел (напр., 5,1,8,2,9)"
+        android:hint="Массив (напр., 5,1,4,2,8)"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,24 +32,14 @@
         android:layout_marginTop="24dp"
         android:autofillHints="numbers" />
 
-    <EditText
-        android:id="@+id/editTextSearchElement"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Искомый элемент"
-        android:inputType="numberSigned"
-        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:autofillHints="number" />
+    <!-- Удаляем editTextSearchElement, если он был от предыдущего задания -->
 
     <Button
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Найти (послед.)"
-        app:layout_constraintTop_toBottomOf="@id/editTextSearchElement"
+        android:text="Сортировать вставкой"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>

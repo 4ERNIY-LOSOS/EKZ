@@ -2510,3 +2510,172 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
+## Задание 15: Сортировка вставкой
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 15: Сортировка вставкой"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextArrayInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Массив (напр., 5,1,4,2,8)"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="numbers" />
+
+    <!-- Удаляем editTextSearchElement, если он был от предыдущего задания -->
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сортировать вставкой"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextArrayInput;
+    // private EditText editTextSearchElement; // Удален, не нужен для сортировки
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        // editTextSearchElement = findViewById(R.id.editTextSearchElement); // Удален
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performInsertionSort();
+            }
+        });
+    }
+
+    private void performInsertionSort() {
+        String inputText = editTextArrayInput.getText().toString();
+        if (inputText.isEmpty()) {
+            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
+            return;
+        }
+
+        String[] stringArray = inputText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+            textViewResult.setText("Результат: Введите числа для сортировки.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+
+        // Алгоритм сортировки вставкой
+        for (int i = 1; i < numbers.length; i++) {
+            int key = numbers[i];
+            int j = i - 1;
+
+            // Перемещаем элементы numbers[0..i-1], которые больше key,
+            // на одну позицию вперед их текущей позиции
+            while (j >= 0 && numbers[j] > key) {
+                numbers[j + 1] = numbers[j];
+                j = j - 1;
+            }
+            numbers[j + 1] = key;
+        }
+
+        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
+    }
+}
+```

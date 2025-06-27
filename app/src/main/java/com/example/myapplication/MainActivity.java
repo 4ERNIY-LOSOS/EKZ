@@ -18,8 +18,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextArrayInput; // Переименовано с editTextSortedArrayInput
-    private EditText editTextSearchElement;
+    private EditText editTextArrayInput;
+    // private EditText editTextSearchElement; // Удален, не нужен для сортировки
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextArrayInput = findViewById(R.id.editTextArrayInput); // Используем новый ID
-        editTextSearchElement = findViewById(R.id.editTextSearchElement);
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        // editTextSearchElement = findViewById(R.id.editTextSearchElement); // Удален
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -44,27 +44,21 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performLinearSearch();
+                performInsertionSort();
             }
         });
     }
 
-    private void performLinearSearch() {
-        String arrayText = editTextArrayInput.getText().toString();
-        String elementText = editTextSearchElement.getText().toString();
-
-        if (arrayText.isEmpty()) {
-            textViewResult.setText("Результат: Поле для массива пустое. Введите массив.");
-            return;
-        }
-        if (elementText.isEmpty()) {
-            textViewResult.setText("Результат: Поле для искомого элемента пустое. Введите элемент.");
+    private void performInsertionSort() {
+        String inputText = editTextArrayInput.getText().toString();
+        if (inputText.isEmpty()) {
+            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
             return;
         }
 
-        String[] stringArray = arrayText.split("[,\\s]+");
+        String[] stringArray = inputText.split("[,\\s]+");
         if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
-            textViewResult.setText("Результат: Введите числа для массива.");
+            textViewResult.setText("Результат: Введите числа для сортировки.");
             return;
         }
 
@@ -74,38 +68,32 @@ public class MainActivity extends AppCompatActivity {
             try {
                 numbersList.add(Integer.parseInt(s.trim()));
             } catch (NumberFormatException e) {
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в массиве: '%s'. Введите корректные целые числа.", s));
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа.", s));
                 return;
             }
         }
 
         if (numbersList.isEmpty()) {
-            textViewResult.setText("Результат: Массив не содержит чисел.");
+            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
             return;
         }
 
         Integer[] numbers = numbersList.toArray(new Integer[0]);
-        int searchElement;
-        try {
-            searchElement = Integer.parseInt(elementText.trim());
-        } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Искомый элемент введен некорректно.");
-            return;
-        }
 
-        // Алгоритм последовательного поиска
-        int index = -1;
-        for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i] == searchElement) {
-                index = i; // Найдено первое вхождение
-                break;
+        // Алгоритм сортировки вставкой
+        for (int i = 1; i < numbers.length; i++) {
+            int key = numbers[i];
+            int j = i - 1;
+
+            // Перемещаем элементы numbers[0..i-1], которые больше key,
+            // на одну позицию вперед их текущей позиции
+            while (j >= 0 && numbers[j] > key) {
+                numbers[j + 1] = numbers[j];
+                j = j - 1;
             }
+            numbers[j + 1] = key;
         }
 
-        if (index != -1) {
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d найден на позиции %d (индекс).", searchElement, index));
-        } else {
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d не найден в массиве.", searchElement));
-        }
+        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
     }
 }

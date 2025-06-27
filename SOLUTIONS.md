@@ -276,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
 ### `MainActivity.java`
 
 ```java
-// Код для MainActivity Задания 20 будет добавлен здесь на следующем шаге
 package com.example.myapplication;
 
 import android.os.Bundle;
@@ -285,8 +284,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-// Import View, Button, EditText, TextView, Locale if they are not already imported from previous tasks
-// For Task 20, we'll need:
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -308,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         // Assuming the layout file name is activity_main.xml and it's updated with Task 20 UI
+        // If you have separate layout files per task, you would use R.layout.activity_task20_main or similar
         setContentView(R.layout.activity_main);
 
         // Initialize UI elements for Task 20
@@ -318,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
         textViewResult_task20 = findViewById(R.id.textViewResult_task20);
 
         // Apply window insets listener (standard part)
+        // Make sure the root view in your activity_main.xml for task 20 has android:id="@+id/main_task20"
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_task20), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -325,15 +324,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set OnClickListener for the calculate button
-        buttonCalculate_task20.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calculateParallelogramDiagonals();
-            }
-        });
+        if (buttonCalculate_task20 != null) {
+            buttonCalculate_task20.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    calculateParallelogramDiagonals();
+                }
+            });
+        }
     }
 
     private void calculateParallelogramDiagonals() {
+        if (editTextSideA_task20 == null || editTextSideB_task20 == null || editTextAngleAlpha_task20 == null || textViewResult_task20 == null) {
+            // Handle cases where views might not be found, though with correct XML this shouldn't happen
+            // Log an error or show a generic error message
+            if (textViewResult_task20 != null) {
+                textViewResult_task20.setText("Ошибка: Компоненты интерфейса не найдены.");
+            }
+            return;
+        }
+
         String strSideA = editTextSideA_task20.getText().toString();
         String strSideB = editTextSideB_task20.getText().toString();
         String strAngleAlpha = editTextAngleAlpha_task20.getText().toString();
@@ -3518,8 +3528,7 @@ public class MainActivity extends AppCompatActivity {
         android:layout_marginTop="8dp"
         android:autofillHints="number" />
 
-    <!-- Поле для ввода диагонали удалено, т.к. она будет вычисляться -->
-    <!-- <EditText
+    <EditText
         android:id="@+id/editTextDiagonalD"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -3529,14 +3538,14 @@ public class MainActivity extends AppCompatActivity {
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"
-        android:autofillHints="number" /> -->
+        android:autofillHints="number" />
 
     <Button
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Вычислить радиус R"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Trapezoid"
+        app:layout_constraintTop_toBottomOf="@id/editTextDiagonalD"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>
@@ -3577,7 +3586,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextLargerBaseA;
     private EditText editTextSmallerBaseB;
     private EditText editTextSideC_Trapezoid;
-    // private EditText editTextDiagonalD; // Удалено, так как диагональ будет вычисляться
+    private EditText editTextDiagonalD;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -3591,7 +3600,7 @@ public class MainActivity extends AppCompatActivity {
         editTextLargerBaseA = findViewById(R.id.editTextLargerBaseA);
         editTextSmallerBaseB = findViewById(R.id.editTextSmallerBaseB);
         editTextSideC_Trapezoid = findViewById(R.id.editTextSideC_Trapezoid);
-        // editTextDiagonalD = findViewById(R.id.editTextDiagonalD); // Удалено
+        editTextDiagonalD = findViewById(R.id.editTextDiagonalD);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -3624,68 +3633,36 @@ public class MainActivity extends AppCompatActivity {
     private void calculateTrapezoidCircumcircleRadius() {
         String strA = editTextLargerBaseA.getText().toString();
         String strB = editTextSmallerBaseB.getText().toString(); // Меньшее основание b
-        String strC_side = editTextSideC_Trapezoid.getText().toString(); // Боковая сторона c
+        String strC = editTextSideC_Trapezoid.getText().toString(); // Боковая сторона c
+        String strD = editTextDiagonalD.getText().toString(); // Диагональ d
 
-        if (strA.isEmpty() || strB.isEmpty() || strC_side.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите все три значения: основания и боковую сторону.");
+        if (strA.isEmpty() || strB.isEmpty() || strC.isEmpty() || strD.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все четыре значения.");
             return;
         }
 
         try {
             double a = Double.parseDouble(strA); // Большее основание
             double b = Double.parseDouble(strB); // Меньшее основание
-            double c_side = Double.parseDouble(strC_side); // Боковая сторона
+            double c_side = Double.parseDouble(strC); // Боковая сторона
+            double d_diag = Double.parseDouble(strD); // Диагональ
 
-            if (a <= 0 || b <= 0 || c_side <= 0) {
+            if (a <= 0 || b <= 0 || c_side <= 0 || d_diag <= 0) {
                 textViewResult.setText("Результат: Все длины должны быть положительными числами.");
                 return;
             }
-            if (a == b) {
-                // Частный случай: прямоугольник (или квадрат)
-                // Для прямоугольника радиус описанной окружности R = d/2, где d - диагональ.
-                // Диагональ прямоугольника d = sqrt(a^2 + c_side^2) (где a - одна сторона, c_side - другая)
-                // В нашем контексте, если a=b, то трапеция - прямоугольник, c_side - это высота.
-                // Но если это равнобокая трапеция, то c_side - это боковая сторона, а не высота.
-                // Если a=b, то это прямоугольник, и c_side должна быть равна высоте.
-                // d = sqrt(a^2 + c_side^2) (где a - основание, c_side - другая сторона/высота)
-                // R = sqrt(a^2 + c_side^2) / 2
-                // Однако, наша формула для диагонали d = sqrt(c_side^2 + a*b) превращается в d = sqrt(c_side^2 + a^2)
-                // Это диагональ прямоугольника со сторонами a и c_side.
-                // Такая логика будет покрыта общим случаем, если c_side - это боковая сторона.
-                // Но если a=b, то (a-b)/2 = 0, h = c_side. d = sqrt(c_side^2 + a*b) = sqrt(h^2 + a^2). Это верно.
-                 textViewResult.setText("Результат: Основания равны. Для прямоугольника R = sqrt(c_side^2 + a*b) / 2. Убедитесь, что это равнобокая трапеция (прямоугольник).");
-                 // Продолжим вычисление, оно должно быть корректным.
-            } else if (a < b) {
-                 textViewResult.setText("Результат: Большее основание (a) должно быть больше или равно меньшему (b). Поменяйте их местами, если необходимо.");
+            if (a <= b) {
+                 textViewResult.setText("Результат: Большее основание (a) должно быть больше меньшего (b).");
                 return;
             }
-
-            // Вычисляем диагональ d для равнобокой трапеции: d = sqrt(c_side^2 + a*b)
-            // Это также следует из теоремы Птолемея для вписанного четырехугольника (трапеции): d*d = c_side*c_side + a*b
-            double d_diag_squared = c_side * c_side + a * b;
-            if (d_diag_squared < 0) {
-                // Это не должно произойти с положительными a, b, c_side
-                textViewResult.setText("Результат: Невозможно вычислить диагональ (отрицательное подкоренное выражение).");
-                return;
-            }
-            double d_diag = Math.sqrt(d_diag_squared);
-
-            // Проверка, может ли такая боковая сторона существовать: c >= |a-b|/2
-            // h^2 = c^2 - ((a-b)/2)^2. h^2 должно быть >= 0.
-            double halfDiffBasesSq = ((a - b) / 2.0) * ((a - b) / 2.0);
-            if (c_side * c_side < halfDiffBasesSq - 1e-9) { // 1e-9 для учета погрешностей
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Невозможно построить равнобокую трапецию с такими сторонами (c^2 < ((a-b)/2)^2). Боковая сторона %.2f слишком коротка для оснований %.2f и %.2f.", c_side, a, b));
-                return;
-            }
-
 
             // Для описанной окружности трапеция должна быть равнобокой.
             // Мы используем треугольник со сторонами: большее основание (a), боковая сторона (c_side), диагональ (d_diag)
             // Площадь этого треугольника S_acd
             double areaTriangle = calculateHeronArea(a, c_side, d_diag);
 
-            if (areaTriangle <= 1e-9) { // Используем малую эпсилон для сравнения с нулем
-                textViewResult.setText("Результат: Невозможно построить треугольник из большего основания (a), боковой стороны (c) и вычисленной диагонали (d). Это может означать вырожденный случай или некорректные исходные данные для трапеции. Площадь треугольника близка к нулю.");
+            if (areaTriangle <= 0) {
+                textViewResult.setText("Результат: Невозможно построить треугольник из большего основания (a), боковой стороны (c) и диагонали (d). Проверьте введенные значения.");
                 return;
             }
 

@@ -12,14 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextArrayInput;
-    // private EditText editTextSearchElement; // Удален, не нужен для сортировки
+    private EditText editTextSideA_Task16;
+    private EditText editTextSideB_Task16;
+    private EditText editTextAngleDegrees;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -30,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextArrayInput = findViewById(R.id.editTextArrayInput);
-        // editTextSearchElement = findViewById(R.id.editTextSearchElement); // Удален
+        editTextSideA_Task16 = findViewById(R.id.editTextSideA_Task16);
+        editTextSideB_Task16 = findViewById(R.id.editTextSideB_Task16);
+        editTextAngleDegrees = findViewById(R.id.editTextAngleDegrees);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -44,56 +42,42 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performInsertionSort();
+                calculateTriangleAreaBySidesAndAngle();
             }
         });
     }
 
-    private void performInsertionSort() {
-        String inputText = editTextArrayInput.getText().toString();
-        if (inputText.isEmpty()) {
-            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
+    private void calculateTriangleAreaBySidesAndAngle() {
+        String strSideA = editTextSideA_Task16.getText().toString();
+        String strSideB = editTextSideB_Task16.getText().toString();
+        String strAngle = editTextAngleDegrees.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strAngle.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите обе стороны и угол.");
             return;
         }
 
-        String[] stringArray = inputText.split("[,\\s]+");
-        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
-            textViewResult.setText("Результат: Введите числа для сортировки.");
-            return;
-        }
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double angleDegrees = Double.parseDouble(strAngle);
 
-        List<Integer> numbersList = new ArrayList<>();
-        for (String s : stringArray) {
-            if (s.trim().isEmpty()) continue;
-            try {
-                numbersList.add(Integer.parseInt(s.trim()));
-            } catch (NumberFormatException e) {
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа.", s));
+            if (a <= 0 || b <= 0) {
+                textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
                 return;
             }
-        }
-
-        if (numbersList.isEmpty()) {
-            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
-            return;
-        }
-
-        Integer[] numbers = numbersList.toArray(new Integer[0]);
-
-        // Алгоритм сортировки вставкой
-        for (int i = 1; i < numbers.length; i++) {
-            int key = numbers[i];
-            int j = i - 1;
-
-            // Перемещаем элементы numbers[0..i-1], которые больше key,
-            // на одну позицию вперед их текущей позиции
-            while (j >= 0 && numbers[j] > key) {
-                numbers[j + 1] = numbers[j];
-                j = j - 1;
+            if (angleDegrees <= 0 || angleDegrees >= 180) {
+                textViewResult.setText("Результат: Угол должен быть больше 0 и меньше 180 градусов.");
+                return;
             }
-            numbers[j + 1] = key;
-        }
 
-        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
+            double angleRadians = Math.toRadians(angleDegrees);
+            double area = 0.5 * a * b * Math.sin(angleRadians);
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь треугольника = %.2f", area));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
     }
 }

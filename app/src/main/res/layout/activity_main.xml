@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Задание 15: Сортировка вставкой"
+        android:text="Задание 16: Площадь треугольника (2 стороны, угол)"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,25 +21,47 @@
         android:layout_marginTop="16dp"/>
 
     <EditText
-        android:id="@+id/editTextArrayInput"
+        android:id="@+id/editTextSideA_Task16"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Массив (напр., 5,1,4,2,8)"
-        android:inputType="text"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"
-        android:autofillHints="numbers" />
+        android:autofillHints="number" />
 
-    <!-- Удаляем editTextSearchElement, если он был от предыдущего задания -->
+    <EditText
+        android:id="@+id/editTextSideB_Task16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextAngleDegrees"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Угол γ (в градусах)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
 
     <Button
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Сортировать вставкой"
-        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
+        android:text="Вычислить площадь"
+        app:layout_constraintTop_toBottomOf="@id/editTextAngleDegrees"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>

@@ -186,6 +186,201 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+## Задание 20: Диагонали параллелограмма
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_task20"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle_task20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 20: Диагонали параллелограмма"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextAngleAlpha_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Угол alpha (в градусах, между a и b)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate_task20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить диагонали"
+        app:layout_constraintTop_toBottomOf="@id/editTextAngleAlpha_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:\nДиагональ d1:\nДиагональ d2:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+// Код для MainActivity Задания 20 будет добавлен здесь на следующем шаге
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+// Import View, Button, EditText, TextView, Locale if they are not already imported from previous tasks
+// For Task 20, we'll need:
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+// Math is part of java.lang, so no specific import needed for Math.sqrt, Math.cos, Math.toRadians
+
+public class MainActivity extends AppCompatActivity {
+
+    // UI Elements for Task 20
+    private EditText editTextSideA_task20;
+    private EditText editTextSideB_task20;
+    private EditText editTextAngleAlpha_task20;
+    private Button buttonCalculate_task20;
+    private TextView textViewResult_task20;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        // Assuming the layout file name is activity_main.xml and it's updated with Task 20 UI
+        setContentView(R.layout.activity_main);
+
+        // Initialize UI elements for Task 20
+        editTextSideA_task20 = findViewById(R.id.editTextSideA_task20);
+        editTextSideB_task20 = findViewById(R.id.editTextSideB_task20);
+        editTextAngleAlpha_task20 = findViewById(R.id.editTextAngleAlpha_task20);
+        buttonCalculate_task20 = findViewById(R.id.buttonCalculate_task20);
+        textViewResult_task20 = findViewById(R.id.textViewResult_task20);
+
+        // Apply window insets listener (standard part)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_task20), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        // Set OnClickListener for the calculate button
+        buttonCalculate_task20.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateParallelogramDiagonals();
+            }
+        });
+    }
+
+    private void calculateParallelogramDiagonals() {
+        String strSideA = editTextSideA_task20.getText().toString();
+        String strSideB = editTextSideB_task20.getText().toString();
+        String strAngleAlpha = editTextAngleAlpha_task20.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strAngleAlpha.isEmpty()) {
+            textViewResult_task20.setText("Результат: Пожалуйста, введите обе стороны и угол.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double alphaDegrees = Double.parseDouble(strAngleAlpha);
+
+            if (a <= 0 || b <= 0) {
+                textViewResult_task20.setText("Результат: Длины сторон должны быть положительными числами.");
+                return;
+            }
+            if (alphaDegrees <= 0 || alphaDegrees >= 180) {
+                textViewResult_task20.setText("Результат: Угол alpha должен быть больше 0 и меньше 180 градусов.");
+                return;
+            }
+
+            double alphaRadians = Math.toRadians(alphaDegrees);
+
+            // d1^2 = a^2 + b^2 - 2ab * cos(alpha)
+            double d1_squared = a*a + b*b - 2*a*b*Math.cos(alphaRadians);
+            // d2^2 = a^2 + b^2 + 2ab * cos(alpha)  (since cos(180-alpha) = -cos(alpha))
+            double d2_squared = a*a + b*b + 2*a*b*Math.cos(alphaRadians);
+
+            // Check for negative results in squared values if inputs are strange, though mathematically unlikely with valid angle
+            if (d1_squared < 0) d1_squared = 0; // Avoid NaN from sqrt of small negative due to precision
+            if (d2_squared < 0) d2_squared = 0;
+
+            double d1 = Math.sqrt(d1_squared);
+            double d2 = Math.sqrt(d2_squared);
+
+            textViewResult_task20.setText(String.format(Locale.getDefault(),
+                "Результат:\nДиагональ d1: %.2f\nДиагональ d2: %.2f", d1, d2));
+
+        } catch (NumberFormatException e) {
+            textViewResult_task20.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
 ## Задание 2: Корни квадратного уравнения
 
 ### `activity_main.xml`

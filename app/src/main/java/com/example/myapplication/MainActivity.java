@@ -38,12 +38,12 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateSumOfDigits();
+                reverseNumberDigits();
             }
         });
     }
 
-    private void calculateSumOfDigits() {
+    private void reverseNumberDigits() {
         String strInput = editTextIntegerInput.getText().toString();
 
         if (strInput.isEmpty()) {
@@ -51,26 +51,44 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Проверка на наличие только знака "-"
+        if (strInput.equals("-")) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+            return;
+        }
+
         try {
-            long number = Long.parseLong(strInput); // Используем long для поддержки более широкого диапазона чисел
-            long originalNumber = number; // Сохраняем исходное число для вывода
+            long number = Long.parseLong(strInput);
+            long originalNumber = number; // Сохраняем для вывода
+            long reversedNumber = 0;
+            boolean isNegative = false;
 
-            number = Math.abs(number); // Работаем с модулем числа
-
-            if (originalNumber == 0) {
-                 textViewResult.setText(String.format(Locale.getDefault(), "Результат: Сумма цифр числа %d = 0", originalNumber));
-                 return;
+            if (number == 0) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Реверс числа %d = 0", originalNumber));
+                return;
             }
 
-            long sum = 0;
-            long tempNumber = number; // Используем временную переменную для цикла
-
-            while (tempNumber > 0) {
-                sum += tempNumber % 10; // Добавляем последнюю цифру к сумме
-                tempNumber /= 10;      // Удаляем последнюю цифру
+            if (number < 0) {
+                isNegative = true;
+                number = -number; // Работаем с положительным числом для реверса
             }
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Сумма цифр числа %d = %d", originalNumber, sum));
+            while (number > 0) {
+                long digit = number % 10;
+                // Проверка на переполнение перед умножением
+                if (reversedNumber > (Long.MAX_VALUE - digit) / 10) {
+                    textViewResult.setText("Результат: Переполнение при реверсе числа.");
+                    return;
+                }
+                reversedNumber = reversedNumber * 10 + digit;
+                number /= 10;
+            }
+
+            if (isNegative) {
+                reversedNumber = -reversedNumber;
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Реверс числа %d = %d", originalNumber, reversedNumber));
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");

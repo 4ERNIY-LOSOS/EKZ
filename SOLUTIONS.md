@@ -186,6 +186,409 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 20: Вычисление диагоналей параллелограмма");
+
+            double sideA, sideB, angleAlphaDegrees;
+
+            // Ввод стороны a
+            while (true)
+            {
+                Console.Write("Введите длину стороны a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out sideA) && sideA > 0)
+                    break;
+                Console.WriteLine("Ошибка: Длина стороны a должна быть положительным числом.");
+            }
+
+            // Ввод стороны b
+            while (true)
+            {
+                Console.Write("Введите длину стороны b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out sideB) && sideB > 0)
+                    break;
+                Console.WriteLine("Ошибка: Длина стороны b должна быть положительным числом.");
+            }
+
+            // Ввод угла alpha (в градусах)
+            while (true)
+            {
+                Console.Write("Введите угол alpha между сторонами a и b (в градусах): ");
+                string inputAngle = Console.ReadLine();
+                if (double.TryParse(inputAngle, NumberStyles.Any, CultureInfo.InvariantCulture, out angleAlphaDegrees) && angleAlphaDegrees > 0 && angleAlphaDegrees < 180)
+                    break;
+                Console.WriteLine("Ошибка: Угол alpha должен быть больше 0 и меньше 180 градусов.");
+            }
+
+            double angleAlphaRadians = Math.PI * angleAlphaDegrees / 180.0;
+
+            // d1^2 = a^2 + b^2 - 2ab * cos(alpha)
+            double d1_squared = sideA * sideA + sideB * sideB - 2 * sideA * sideB * Math.Cos(angleAlphaRadians);
+            // d2^2 = a^2 + b^2 + 2ab * cos(alpha)  (так как cos(180-alpha) = -cos(alpha))
+            double d2_squared = sideA * sideA + sideB * sideB + 2 * sideA * sideB * Math.Cos(angleAlphaRadians);
+
+            // Защита от отрицательных значений под корнем из-за погрешностей
+            if (d1_squared < 0) d1_squared = 0;
+            if (d2_squared < 0) d2_squared = 0;
+
+            double d1 = Math.Sqrt(d1_squared);
+            double d2 = Math.Sqrt(d2_squared);
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Диагональ d1: {0:F2}", d1));
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Диагональ d2: {0:F2}", d2));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static int LinearSearch(int[] arr, int elementToSearch)
+        {
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (arr[i] == elementToSearch)
+                {
+                    return i; // Элемент найден, возвращаем индекс
+                }
+            }
+            return -1; // Элемент не найден
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 14: Последовательный поиск элемента в массиве");
+
+            List<int> numbersList = new List<int>();
+            bool validInput = false;
+            int[] numbers = null;
+
+            while (!validInput)
+            {
+                Console.Write("Введите массив чисел через запятую или пробел (напр., 5,1,8,2,9): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    numbers = numbersList.ToArray();
+                    validInput = true;
+                }
+                else if (currentParseSuccess && !numbersList.Any())
+                {
+                     Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            Console.WriteLine("Введенный массив: " + string.Join(", ", numbers));
+            int searchElement;
+            while (true)
+            {
+                Console.Write("Введите искомый элемент (целое число): ");
+                string inputElement = Console.ReadLine();
+                if (int.TryParse(inputElement, NumberStyles.Integer, CultureInfo.InvariantCulture, out searchElement))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            int foundIndex = LinearSearch(numbers, searchElement);
+
+            if (foundIndex != -1)
+            {
+                Console.WriteLine($"Элемент {searchElement} найден на позиции {foundIndex} (индекс первого вхождения).");
+            }
+            else
+            {
+                Console.WriteLine($"Элемент {searchElement} не найден в массиве.");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static int BinarySearch(int[] arr, int elementToSearch)
+        {
+            int low = 0;
+            int high = arr.Length - 1;
+            int index = -1;
+
+            while (low <= high)
+            {
+                int mid = low + (high - low) / 2;
+                if (arr[mid] == elementToSearch)
+                {
+                    index = mid;
+                    break;
+                }
+                else if (arr[mid] < elementToSearch)
+                {
+                    low = mid + 1;
+                }
+                else
+                {
+                    high = mid - 1;
+                }
+            }
+            return index;
+        }
+
+        static bool IsArraySorted(int[] arr)
+        {
+            for (int i = 0; i < arr.Length - 1; i++)
+            {
+                if (arr[i] > arr[i + 1])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 13: Бинарный поиск элемента в отсортированном массиве");
+
+            List<int> numbersList = new List<int>();
+            bool validArrayInput = false;
+            int[] numbers = null;
+
+            while (!validArrayInput)
+            {
+                Console.Write("Введите отсортированный массив чисел через запятую или пробел (напр., 1,5,8,12,15): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    numbers = numbersList.ToArray();
+                    if (!IsArraySorted(numbers))
+                    {
+                        Console.WriteLine("Ошибка: Введенный массив не отсортирован. Бинарный поиск требует отсортированного массива.");
+                        Console.WriteLine("Пожалуйста, введите отсортированный массив.");
+                        // validArrayInput остается false, чтобы цикл повторился
+                    }
+                    else
+                    {
+                        validArrayInput = true;
+                    }
+                }
+                else if (currentParseSuccess && !numbersList.Any())
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            Console.WriteLine("Введенный массив: " + string.Join(", ", numbers));
+            int searchElement;
+            while (true)
+            {
+                Console.Write("Введите искомый элемент (целое число): ");
+                string inputElement = Console.ReadLine();
+                if (int.TryParse(inputElement, NumberStyles.Integer, CultureInfo.InvariantCulture, out searchElement))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            int foundIndex = BinarySearch(numbers, searchElement);
+
+            if (foundIndex != -1)
+            {
+                Console.WriteLine($"Элемент {searchElement} найден на позиции {foundIndex} (индекс).");
+            }
+            else
+            {
+                Console.WriteLine($"Элемент {searchElement} не найден в массиве.");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 1: Вычисление площади треугольника по формуле Герона");
+
+            double a, b, c;
+
+            // Ввод стороны a
+            while (true)
+            {
+                Console.Write("Введите сторону a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a) && a > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Сторона a должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод стороны b
+            while (true)
+            {
+                Console.Write("Введите сторону b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b) && b > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Сторона b должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод стороны c
+            while (true)
+            {
+                Console.Write("Введите сторону c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c) && c > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Сторона c должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Проверка неравенства треугольника
+            if (a + b <= c || a + c <= b || b + c <= a)
+            {
+                Console.WriteLine("Ошибка: Сумма двух сторон должна быть больше третьей стороны. Треугольник с такими сторонами не существует.");
+            }
+            else
+            {
+                // Вычисление полупериметра
+                double p = (a + b + c) / 2;
+
+                // Вычисление площади по формуле Герона
+                double area = Math.Sqrt(p * (p - a) * (p - b) * (p - c));
+
+                if (double.IsNaN(area) || double.IsInfinity(area))
+                {
+                    Console.WriteLine("Ошибка: Невозможно вычислить площадь с данными сторонами (результат NaN или бесконечность).");
+                }
+                else
+                {
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Площадь треугольника: {0:F2}", area));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 2: Корни квадратного уравнения
 
 ### `activity_main.xml`
@@ -376,6 +779,116 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 2: Вычисление корней квадратного уравнения (ax^2 + bx + c = 0)");
+
+            double a, b, c;
+
+            Console.WriteLine("Введите коэффициенты уравнения:");
+
+            // Ввод коэффициента a
+            while (true)
+            {
+                Console.Write("a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод для коэффициента a. Пожалуйста, введите число.");
+            }
+
+            // Ввод коэффициента b
+            while (true)
+            {
+                Console.Write("b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод для коэффициента b. Пожалуйста, введите число.");
+            }
+
+            // Ввод коэффициента c
+            while (true)
+            {
+                Console.Write("c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод для коэффициента c. Пожалуйста, введите число.");
+            }
+
+            Console.WriteLine($"Уравнение: {a.ToString(CultureInfo.InvariantCulture)}x^2 + {b.ToString(CultureInfo.InvariantCulture)}x + {c.ToString(CultureInfo.InvariantCulture)} = 0");
+
+            if (a == 0)
+            {
+                // Это линейное уравнение: bx + c = 0
+                if (b == 0)
+                {
+                    if (c == 0)
+                    {
+                        Console.WriteLine("Результат: Бесконечное множество решений (0 = 0).");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Результат: Решений нет ({c.ToString(CultureInfo.InvariantCulture)} = 0, что неверно).");
+                    }
+                }
+                else
+                {
+                    double x = -c / b;
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: Линейное уравнение. Один корень x = {0:F2}", x));
+                }
+            }
+            else
+            {
+                // Квадратное уравнение
+                double discriminant = b * b - 4 * a * c;
+                Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Дискриминант D = {0:F2}", discriminant));
+
+                if (discriminant > 0)
+                {
+                    double x1 = (-b + Math.Sqrt(discriminant)) / (2 * a);
+                    double x2 = (-b - Math.Sqrt(discriminant)) / (2 * a);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: Два действительных корня: x1 = {0:F2}, x2 = {1:F2}", x1, x2));
+                }
+                else if (discriminant == 0)
+                {
+                    double x = -b / (2 * a);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: Один действительный корень: x = {0:F2}", x));
+                }
+                else // discriminant < 0
+                {
+                    Console.WriteLine("Результат: Действительных корней нет (дискриминант < 0).");
+                    // Можно добавить вычисление комплексных корней при необходимости
+                    // double realPart = -b / (2 * a);
+                    // double imaginaryPart = Math.Sqrt(-discriminant) / (2 * a);
+                    // Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Комплексные корни: x1 = {0:F2} + {1:F2}i, x2 = {0:F2} - {1:F2}i", realPart, imaginaryPart));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 3: Площадь трапеции
 
 ### `activity_main.xml`
@@ -547,6 +1060,70 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 3: Вычисление площади трапеции");
+
+            double baseA, baseB, height;
+
+            // Ввод основания a
+            while (true)
+            {
+                Console.Write("Введите основание a: ");
+                string inputBaseA = Console.ReadLine();
+                if (double.TryParse(inputBaseA, NumberStyles.Any, CultureInfo.InvariantCulture, out baseA) && baseA > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Основание a должно быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод основания b
+            while (true)
+            {
+                Console.Write("Введите основание b: ");
+                string inputBaseB = Console.ReadLine();
+                if (double.TryParse(inputBaseB, NumberStyles.Any, CultureInfo.InvariantCulture, out baseB) && baseB > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Основание b должно быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод высоты h
+            while (true)
+            {
+                Console.Write("Введите высоту h: ");
+                string inputHeight = Console.ReadLine();
+                if (double.TryParse(inputHeight, NumberStyles.Any, CultureInfo.InvariantCulture, out height) && height > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Высота h должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Вычисление площади трапеции
+            double area = ((baseA + baseB) / 2) * height;
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Площадь трапеции: {0:F2}", area));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 4: Объем цилиндра
 
 ### `activity_main.xml`
@@ -698,6 +1275,59 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 4: Вычисление объема цилиндра");
+
+            double radius, height;
+
+            // Ввод радиуса основания
+            while (true)
+            {
+                Console.Write("Введите радиус основания (r): ");
+                string inputRadius = Console.ReadLine();
+                if (double.TryParse(inputRadius, NumberStyles.Any, CultureInfo.InvariantCulture, out radius) && radius > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Радиус должен быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод высоты цилиндра
+            while (true)
+            {
+                Console.Write("Введите высоту цилиндра (h): ");
+                string inputHeight = Console.ReadLine();
+                if (double.TryParse(inputHeight, NumberStyles.Any, CultureInfo.InvariantCulture, out height) && height > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Высота должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Вычисление объема цилиндра
+            // V = π * r^2 * h
+            double volume = Math.PI * radius * radius * height;
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Объем цилиндра: {0:F2}", volume));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -919,6 +1549,120 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 5: Простой калькулятор (+, -, *, /)");
+
+            double num1, num2;
+            char operation;
+
+            // Ввод первого числа
+            while (true)
+            {
+                Console.Write("Введите первое число: ");
+                string inputNum1 = Console.ReadLine();
+                if (double.TryParse(inputNum1, NumberStyles.Any, CultureInfo.InvariantCulture, out num1))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите число.");
+            }
+
+            // Ввод второго числа
+            while (true)
+            {
+                Console.Write("Введите второе число: ");
+                string inputNum2 = Console.ReadLine();
+                if (double.TryParse(inputNum2, NumberStyles.Any, CultureInfo.InvariantCulture, out num2))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите число.");
+            }
+
+            // Ввод операции
+            while (true)
+            {
+                Console.Write("Введите операцию (+, -, *, /): ");
+                string inputOp = Console.ReadLine();
+                if (inputOp.Length == 1 && (inputOp[0] == '+' || inputOp[0] == '-' || inputOp[0] == '*' || inputOp[0] == '/'))
+                {
+                    operation = inputOp[0];
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректная операция. Доступные операции: +, -, *, /");
+            }
+
+            double result = 0;
+            bool error = false;
+            string errorMessage = string.Empty;
+
+            switch (operation)
+            {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    if (num2 == 0)
+                    {
+                        error = true;
+                        errorMessage = "Ошибка: Деление на ноль невозможно.";
+                    }
+                    else
+                    {
+                        result = num1 / num2;
+                    }
+                    break;
+            }
+
+            if (error)
+            {
+                Console.WriteLine(errorMessage);
+            }
+            else
+            {
+                // Вывод с учетом возможного целого результата
+                if (result == Math.Floor(result) && !double.IsInfinity(result) && !double.IsNaN(result)) // Проверка на целое число
+                {
+                     Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: {0} {1} {2} = {3}",
+                        num1.ToString(CultureInfo.InvariantCulture),
+                        operation,
+                        num2.ToString(CultureInfo.InvariantCulture),
+                        (long)result));
+                }
+                else
+                {
+                     Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: {0} {1} {2} = {3:F2}",
+                        num1.ToString(CultureInfo.InvariantCulture),
+                        operation,
+                        num2.ToString(CultureInfo.InvariantCulture),
+                        result));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 6: НОД трех чисел
 
 ### `activity_main.xml`
@@ -1113,6 +1857,96 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        // Метод для вычисления НОД двух чисел (алгоритм Евклида)
+        static int CalculateGCD(int a, int b)
+        {
+            a = Math.Abs(a);
+            b = Math.Abs(b);
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        // Метод для вычисления НОД трех чисел
+        static int CalculateGCD(int a, int b, int c)
+        {
+            // НОД(a, b, c) = НОД(НОД(a, b), c)
+            return CalculateGCD(CalculateGCD(a, b), c);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 6: Вычисление НОД трех чисел");
+
+            int num1, num2, num3;
+
+            // Ввод первого числа
+            while (true)
+            {
+                Console.Write("Введите первое целое число: ");
+                string input1 = Console.ReadLine();
+                if (int.TryParse(input1, NumberStyles.Integer, CultureInfo.InvariantCulture, out num1))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            // Ввод второго числа
+            while (true)
+            {
+                Console.Write("Введите второе целое число: ");
+                string input2 = Console.ReadLine();
+                if (int.TryParse(input2, NumberStyles.Integer, CultureInfo.InvariantCulture, out num2))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            // Ввод третьего числа
+            while (true)
+            {
+                Console.Write("Введите третье целое число: ");
+                string input3 = Console.ReadLine();
+                if (int.TryParse(input3, NumberStyles.Integer, CultureInfo.InvariantCulture, out num3))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            if (num1 == 0 && num2 == 0 && num3 == 0)
+            {
+                 Console.WriteLine("Результат: НОД(0, 0, 0) = 0 (по соглашению, либо не определен).");
+            }
+            else
+            {
+                int gcdResult = CalculateGCD(num1, num2, num3);
+                Console.WriteLine($"Результат: НОД({num1}, {num2}, {num3}) = {gcdResult}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 7: НОК двух чисел
 
 ### `activity_main.xml`
@@ -1291,6 +2125,89 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        // Метод для вычисления НОД двух чисел (алгоритм Евклида)
+        static int CalculateGCD(int a, int b)
+        {
+            a = Math.Abs(a);
+            b = Math.Abs(b);
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        // Метод для вычисления НОК двух чисел
+        static long CalculateLCM(int a, int b)
+        {
+            if (a == 0 || b == 0)
+            {
+                return 0;
+            }
+            // НОК(a,b) = (|a*b|) / НОД(a,b)
+            // Используем long для произведения, чтобы избежать переполнения
+            long product = (long)Math.Abs(a) * Math.Abs(b);
+            int gcd = CalculateGCD(a, b);
+
+            if (gcd == 0) // Это может произойти только если a=0 и b=0, что уже обработано
+            {
+                return 0; // Или можно выбросить исключение, но по логике выше сюда не попадем
+            }
+            return product / gcd;
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 7: Вычисление НОК двух чисел");
+
+            int num1, num2;
+
+            // Ввод первого числа
+            while (true)
+            {
+                Console.Write("Введите первое целое число: ");
+                string input1 = Console.ReadLine();
+                if (int.TryParse(input1, NumberStyles.Integer, CultureInfo.InvariantCulture, out num1))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            // Ввод второго числа
+            while (true)
+            {
+                Console.Write("Введите второе целое число: ");
+                string input2 = Console.ReadLine();
+                if (int.TryParse(input2, NumberStyles.Integer, CultureInfo.InvariantCulture, out num2))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long lcmResult = CalculateLCM(num1, num2);
+            Console.WriteLine($"Результат: НОК({num1}, {num2}) = {lcmResult}");
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 8: Сумма цифр числа
 
 ### `activity_main.xml`
@@ -1433,6 +2350,61 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 8: Вычисление суммы цифр целого числа");
+
+            long number;
+
+            // Ввод числа
+            while (true)
+            {
+                Console.Write("Введите целое число: ");
+                string inputText = Console.ReadLine();
+                if (long.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out number))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long originalNumber = number; // Сохраняем исходное число для вывода
+            number = Math.Abs(number);    // Работаем с модулем числа
+
+            if (originalNumber == 0)
+            {
+                Console.WriteLine($"Сумма цифр числа {originalNumber} = 0");
+            }
+            else
+            {
+                long sumOfDigits = 0;
+                long tempNumber = number;
+
+                while (tempNumber > 0)
+                {
+                    sumOfDigits += tempNumber % 10; // Добавляем последнюю цифру к сумме
+                    tempNumber /= 10;             // Удаляем последнюю цифру
+                }
+                Console.WriteLine($"Сумма цифр числа {originalNumber} = {sumOfDigits}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -1598,6 +2570,103 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 9: Реверс числа");
+
+            long number;
+
+            // Ввод числа
+            while (true)
+            {
+                Console.Write("Введите целое число: ");
+                string inputText = Console.ReadLine();
+                if (inputText == "-")
+                {
+                    Console.WriteLine("Ошибка: Введен только знак минус. Пожалуйста, введите корректное целое число.");
+                    continue;
+                }
+                if (long.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out number))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long originalNumber = number;
+            long reversedNumber = 0;
+            bool isNegative = false;
+
+            if (number == 0)
+            {
+                Console.WriteLine($"Реверс числа {originalNumber} = 0");
+            }
+            else
+            {
+                if (number < 0)
+                {
+                    isNegative = true;
+                    // Проверка на выход за пределы Long.MinValue при Math.Abs, если число Long.MinValue
+                    if (number == long.MinValue)
+                    {
+                         Console.WriteLine($"Число {originalNumber} слишком мало для корректного реверса без переполнения после взятия модуля. Реверс может быть некорректен.");
+                         // Попытка реверса как строки для такого крайнего случая
+                         string s = originalNumber.ToString(CultureInfo.InvariantCulture);
+                         char[] charArray = s.Substring(1).ToCharArray(); // Убираем минус
+                         Array.Reverse(charArray);
+                         Console.WriteLine($"Реверс числа {originalNumber} (строковый) = -{new string(charArray)}");
+                         Console.WriteLine("\nНажмите любую клавишу для выхода...");
+                         Console.ReadKey();
+                         return;
+                    }
+                    number = Math.Abs(number);
+                }
+
+                long tempNumber = number;
+                bool overflow = false;
+                while (tempNumber > 0)
+                {
+                    long digit = tempNumber % 10;
+                    if (reversedNumber > (long.MaxValue - digit) / 10) // Проверка на переполнение
+                    {
+                        overflow = true;
+                        break;
+                    }
+                    reversedNumber = reversedNumber * 10 + digit;
+                    tempNumber /= 10;
+                }
+
+                if (overflow)
+                {
+                    Console.WriteLine($"Ошибка: Переполнение при реверсе числа {originalNumber}.");
+                }
+                else
+                {
+                    if (isNegative)
+                    {
+                        reversedNumber = -reversedNumber;
+                    }
+                    Console.WriteLine($"Реверс числа {originalNumber} = {reversedNumber}");
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -1774,6 +2843,106 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 10: Сортировка массива методом пузырька");
+
+            List<int> numbersList = new List<int>();
+            bool validInput = false;
+
+            while (!validInput)
+            {
+                Console.Write("Введите числа через запятую или пробел (напр., 5,1,4,2,8): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                // Разделение строки по запятым и пробелам, удаление пустых записей
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear(); // Очищаем список перед новой попыткой
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    validInput = true;
+                }
+                else if (currentParseSuccess && !numbersList.Any()) // Случай, если ввод состоял только из разделителей
+                {
+                     Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            int[] numbers = numbersList.ToArray();
+            Console.WriteLine("Исходный массив: " + string.Join(", ", numbers));
+
+            // Алгоритм сортировки пузырьком
+            int n = numbers.Length;
+            bool swapped;
+            for (int i = 0; i < n - 1; i++)
+            {
+                swapped = false;
+                for (int j = 0; j < n - 1 - i; j++)
+                {
+                    if (numbers[j] > numbers[j + 1])
+                    {
+                        // Обмен значениями
+                        int temp = numbers[j];
+                        numbers[j] = numbers[j + 1];
+                        numbers[j + 1] = temp;
+                        swapped = true;
+                    }
+                }
+                // Если во внутреннем цикле не было обменов, массив уже отсортирован
+                if (!swapped)
+                {
+                    break;
+                }
+            }
+
+            Console.WriteLine("Отсортированный массив: " + string.Join(", ", numbers));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 11: Перестановка первой и последней цифры
 
 ### `activity_main.xml`
@@ -1934,6 +3103,90 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 11: Перестановка первой и последней цифры числа");
+
+            long number;
+
+            while (true)
+            {
+                Console.Write("Введите целое число: ");
+                string inputText = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(inputText) || inputText == "-")
+                {
+                    Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+                    continue;
+                }
+                if (long.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out number))
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long originalNumber = number;
+            bool isNegative = false;
+
+            if (number < 0)
+            {
+                isNegative = true;
+                if (number == long.MinValue) // Особый случай для long.MinValue
+                {
+                    Console.WriteLine($"Число {originalNumber} (long.MinValue) не может быть корректно обработано стандартным Math.Abs. Перестановка не будет выполнена.");
+                    Console.WriteLine("\nНажмите любую клавишу для выхода...");
+                    Console.ReadKey();
+                    return;
+                }
+                number = Math.Abs(number);
+            }
+
+            if (number < 10)
+            {
+                Console.WriteLine($"Результат: {originalNumber} (число однозначное, не изменилось)");
+            }
+            else
+            {
+                long lastDigit = number % 10;
+
+                long temp = number;
+                long powerOf10 = 1;
+                while (temp >= 10)
+                {
+                    temp /= 10;
+                    powerOf10 *= 10;
+                }
+                long firstDigit = number / powerOf10;
+
+                long middlePartWithLastRemoved = number / 10; // Удаляем последнюю цифру
+                long middlePart = middlePartWithLastRemoved % (powerOf10 / 10); // Удаляем первую цифру из оставшейся части
+
+                long newNumberConstructed = lastDigit * powerOf10 + middlePart * 10 + firstDigit;
+
+                if (isNegative)
+                {
+                    newNumberConstructed = -newNumberConstructed;
+                }
+                Console.WriteLine($"Результат: Исходное: {originalNumber}, Новое: {newNumberConstructed}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -2104,6 +3357,94 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректное целое число для N.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq; // Для string.Join
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 12: Генерация последовательности чисел Фибоначчи");
+
+            int n;
+
+            // Ввод количества чисел
+            while (true)
+            {
+                Console.Write("Введите количество чисел Фибоначчи (N): ");
+                string inputText = Console.ReadLine();
+                if (int.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out n))
+                {
+                    if (n < 0)
+                    {
+                        Console.WriteLine("Ошибка: Количество чисел не может быть отрицательным.");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+                }
+            }
+
+            if (n == 0)
+            {
+                Console.WriteLine("Результат: Последовательность пуста (0 чисел).");
+            }
+            // F(93) уже выходит за пределы ulong.MaxValue, поэтому long для Java был хорошим выбором.
+            // C# long (Int64) такой же, как Java long.
+            else if (n > 92)
+            {
+                 Console.WriteLine("Результат: Слишком большое N. Пожалуйста, введите N <= 92, чтобы избежать переполнения long.");
+            }
+            else
+            {
+                List<long> fibonacciSequence = new List<long>();
+                if (n >= 1)
+                {
+                    fibonacciSequence.Add(0L);
+                }
+                if (n >= 2)
+                {
+                    fibonacciSequence.Add(1L);
+                }
+
+                for (int i = 2; i < n; i++)
+                {
+                    // Проверка на переполнение перед сложением (хотя ограничение n > 92 должно это предотвратить)
+                    if (fibonacciSequence[i - 2] > 0 && fibonacciSequence[i - 1] > long.MaxValue - fibonacciSequence[i - 2] )
+                    {
+                        Console.WriteLine("Обнаружено переполнение при генерации последовательности.");
+                        break;
+                    }
+                     if (fibonacciSequence[i - 2] < 0 && fibonacciSequence[i - 1] < long.MinValue - fibonacciSequence[i - 2] )
+                    {
+                        Console.WriteLine("Обнаружено антипереполнение при генерации последовательности.");
+                        break;
+                    }
+                    long nextFib = fibonacciSequence[i - 1] + fibonacciSequence[i - 2];
+                    fibonacciSequence.Add(nextFib);
+                }
+                Console.WriteLine("Результат: " + string.Join(", ", fibonacciSequence));
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -2680,6 +4021,100 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void InsertionSort(int[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                int key = arr[i];
+                int j = i - 1;
+
+                // Перемещаем элементы arr[0..i-1], которые больше key,
+                // на одну позицию вперед их текущей позиции
+                while (j >= 0 && arr[j] > key)
+                {
+                    arr[j + 1] = arr[j];
+                    j = j - 1;
+                }
+                arr[j + 1] = key;
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 15: Сортировка массива методом вставки");
+
+            List<int> numbersList = new List<int>();
+            bool validInput = false;
+            int[] numbers = null;
+
+            while (!validInput)
+            {
+                Console.Write("Введите массив чисел через запятую или пробел (напр., 5,1,4,2,8): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    numbers = numbersList.ToArray();
+                    validInput = true;
+                }
+                 else if (currentParseSuccess && !numbersList.Any())
+                {
+                     Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            Console.WriteLine("Исходный массив: " + string.Join(", ", numbers));
+            InsertionSort(numbers);
+            Console.WriteLine("Отсортированный массив: " + string.Join(", ", numbers));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 16: Площадь треугольника (2 стороны, угол)
 
 ### `activity_main.xml`
@@ -2850,6 +4285,74 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 16: Вычисление площади треугольника по двум сторонам и углу между ними");
+
+            double sideA, sideB, angleDegrees;
+
+            // Ввод стороны a
+            while (true)
+            {
+                Console.Write("Введите длину стороны a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out sideA) && sideA > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Длина стороны a должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод стороны b
+            while (true)
+            {
+                Console.Write("Введите длину стороны b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out sideB) && sideB > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Длина стороны b должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            // Ввод угла gamma (в градусах)
+            while (true)
+            {
+                Console.Write("Введите угол γ между сторонами a и b (в градусах): ");
+                string inputAngle = Console.ReadLine();
+                if (double.TryParse(inputAngle, NumberStyles.Any, CultureInfo.InvariantCulture, out angleDegrees) && angleDegrees > 0 && angleDegrees < 180)
+                {
+                    break;
+                }
+                Console.WriteLine("Ошибка: Угол должен быть больше 0 и меньше 180 градусов. Пожалуйста, попробуйте снова.");
+            }
+
+            // Перевод угла в радианы
+            double angleRadians = Math.PI * angleDegrees / 180.0;
+
+            // Вычисление площади
+            // Площадь = 0.5 * a * b * sin(γ)
+            double area = 0.5 * sideA * sideB * Math.Sin(angleRadians);
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Площадь треугольника: {0:F2}", area));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -3056,6 +4559,100 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+### ConsoleApp.cs (C# Solution)
+**Примечание:** Java-код выше для Задания 17 в `SOLUTIONS.md` на самом деле решает Задание 18 (радиус вписанной окружности). Ниже представлено C#-решение для Задания 17 (радиус **описанной** окружности).
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        // Вспомогательный метод для вычисления площади треугольника по формуле Герона
+        static double CalculateHeronArea(double sA, double sB, double sC, out double semiPerimeter)
+        {
+            semiPerimeter = (sA + sB + sC) / 2.0;
+            // Проверка неравенства треугольника уже неявно покрывается тем, что подкоренное выражение будет > 0
+            double areaSquared = semiPerimeter * (semiPerimeter - sA) * (semiPerimeter - sB) * (semiPerimeter - sC);
+
+            if (areaSquared < 0) // Если из-за погрешностей стало чуть меньше нуля, или стороны не образуют треугольник
+            {
+                return -1; // Сигнал ошибки
+            }
+            return Math.Sqrt(areaSquared);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 17: Вычисление радиуса ОПИСАННОЙ окружности около треугольника");
+
+            double a, b, c;
+
+            // Ввод стороны a
+            while (true)
+            {
+                Console.Write("Введите сторону a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a) && a > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона a должна быть положительным числом.");
+            }
+
+            // Ввод стороны b
+            while (true)
+            {
+                Console.Write("Введите сторону b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b) && b > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона b должна быть положительным числом.");
+            }
+
+            // Ввод стороны c
+            while (true)
+            {
+                Console.Write("Введите сторону c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c) && c > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона c должна быть положительным числом.");
+            }
+
+            // Проверка неравенства треугольника (строгая)
+            if (a + b <= c || a + c <= b || b + c <= a)
+            {
+                Console.WriteLine("Ошибка: Сумма двух сторон должна быть больше третьей. Треугольник с такими сторонами не существует.");
+            }
+            else
+            {
+                double semiP; // Полупериметр будет вычислен в CalculateHeronArea
+                double area = CalculateHeronArea(a, b, c, out semiP);
+
+                if (area < 0) // Ошибка из CalculateHeronArea
+                {
+                     Console.WriteLine("Ошибка: Невозможно образовать треугольник с данными сторонами (проверьте неравенство треугольника).");
+                }
+                else if (area == 0)
+                {
+                    Console.WriteLine("Результат: Площадь треугольника равна нулю (вырожденный треугольник). Радиус описанной окружности не определен (бесконечность).");
+                }
+                else
+                {
+                    // R = (a*b*c) / (4*S)
+                    double circumRadius = (a * b * c) / (4 * area);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Радиус описанной окружности R = {0:F2}", circumRadius));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
 ## Задание 18: Радиус вписанной окружности
 
 ### `activity_main.xml`
@@ -3254,6 +4851,104 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        // Вспомогательный метод для вычисления площади треугольника по формуле Герона
+        // Возвращает площадь или -1 при ошибке (не треугольник)
+        static double CalculateHeronArea(double sA, double sB, double sC, out double semiPerimeter)
+        {
+            semiPerimeter = (sA + sB + sC) / 2.0;
+            double areaSquared = semiPerimeter * (semiPerimeter - sA) * (semiPerimeter - sB) * (semiPerimeter - sC);
+
+            if (areaSquared < -1e-9) // Допуск на погрешность вычислений
+            {
+                return -1;
+            }
+            if (areaSquared < 0) areaSquared = 0; // Если очень близко к нулю, но отрицательное
+            return Math.Sqrt(areaSquared);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 18: Вычисление радиуса ВПИСАННОЙ окружности в треугольник");
+
+            double a, b, c;
+
+            // Ввод стороны a
+            while (true)
+            {
+                Console.Write("Введите сторону a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a) && a > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона a должна быть положительным числом.");
+            }
+
+            // Ввод стороны b
+            while (true)
+            {
+                Console.Write("Введите сторону b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b) && b > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона b должна быть положительным числом.");
+            }
+
+            // Ввод стороны c
+            while (true)
+            {
+                Console.Write("Введите сторону c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c) && c > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона c должна быть положительным числом.");
+            }
+
+            // Проверка неравенства треугольника (строгая)
+            if (a + b <= c || a + c <= b || b + c <= a)
+            {
+                Console.WriteLine("Ошибка: Сумма двух сторон должна быть больше третьей. Треугольник с такими сторонами не существует.");
+            }
+            else
+            {
+                double semiPerimeter;
+                double area = CalculateHeronArea(a, b, c, out semiPerimeter);
+
+                if (area < 0) // Ошибка из CalculateHeronArea (не треугольник по формуле Герона)
+                {
+                     Console.WriteLine("Ошибка: С данными сторонами невозможно образовать треугольник (проверьте неравенство треугольника).");
+                }
+                else if (area == 0) // Вырожденный треугольник
+                {
+                     Console.WriteLine("Результат: Площадь треугольника равна нулю (вырожденный треугольник). Радиус вписанной окружности не определен / равен 0.");
+                }
+                else if (semiPerimeter == 0) // Теоретически не должно случиться, если area > 0
+                {
+                    Console.WriteLine("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+                }
+                else
+                {
+                    // r = Area / p
+                    double inRadius = area / semiPerimeter;
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Радиус вписанной окружности r = {0:F2}", inRadius));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }
@@ -3502,6 +5197,113 @@ public class MainActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        // Вспомогательный метод для вычисления площади треугольника по формуле Герона
+        static double CalculateHeronArea(double s1, double s2, double s3)
+        {
+            if (s1 + s2 <= s3 || s1 + s3 <= s2 || s2 + s3 <= s1) {
+                return -1; // Невозможно образовать треугольник
+            }
+            double p = (s1 + s2 + s3) / 2.0;
+            double areaSquared = p * (p - s1) * (p - s2) * (p - s3);
+            if (areaSquared < -1e-9) return -1; // Учет ошибок округления
+            if (areaSquared < 0) areaSquared = 0;
+            return Math.Sqrt(areaSquared);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 19: Радиус описанной окружности равнобокой трапеции");
+
+            double largerBaseA, smallerBaseB, sideC;
+
+            // Ввод большего основания a
+            while (true)
+            {
+                Console.Write("Введите большее основание (a): ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out largerBaseA) && largerBaseA > 0)
+                    break;
+                Console.WriteLine("Ошибка: Большее основание (a) должно быть положительным числом.");
+            }
+
+            // Ввод меньшего основания b
+            while (true)
+            {
+                Console.Write("Введите меньшее основание (b): ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out smallerBaseB) && smallerBaseB > 0)
+                    break;
+                Console.WriteLine("Ошибка: Меньшее основание (b) должно быть положительным числом.");
+            }
+
+            // Ввод боковой стороны c
+            while (true)
+            {
+                Console.Write("Введите боковую сторону (c): ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out sideC) && sideC > 0)
+                    break;
+                Console.WriteLine("Ошибка: Боковая сторона (c) должна быть положительным числом.");
+            }
+
+            if (largerBaseA <= smallerBaseB)
+            {
+                Console.WriteLine("Ошибка: Большее основание (a) должно быть строго больше меньшего основания (b).");
+            }
+            // Проверка возможности построения трапеции: c >= (a-b)/2  => c^2 >= ((a-b)/2)^2
+            else if (sideC * sideC < Math.Pow((largerBaseA - smallerBaseB) / 2.0, 2) - 1e-9) // 1e-9 для погрешности
+            {
+                 Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
+                     "Ошибка: Невозможно построить равнобокую трапецию с такими сторонами. Боковая сторона {0:F2} слишком коротка для оснований {1:F2} и {2:F2}.",
+                     sideC, largerBaseA, smallerBaseB));
+            }
+            else
+            {
+                // Вычисление диагонали d для равнобокой трапеции: d^2 = c^2 + a*b
+                double diagonalSquared = sideC * sideC + largerBaseA * smallerBaseB;
+                if (diagonalSquared < 0) // Маловероятно с положительными входами
+                {
+                    Console.WriteLine("Ошибка: Невозможно вычислить диагональ (отрицательное подкоренное выражение).");
+                }
+                else
+                {
+                    double diagonal = Math.Sqrt(diagonalSquared);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Вычисленная диагональ d = {0:F2}", diagonal));
+
+                    // Радиус описанной окружности R вычисляется через треугольник со сторонами:
+                    // большее основание (a), боковая сторона (c), диагональ (d)
+                    double areaTriangle = CalculateHeronArea(largerBaseA, sideC, diagonal);
+
+                    if (areaTriangle <= 1e-9) // Используем малую эпсилон для сравнения с нулем
+                    {
+                        Console.WriteLine("Ошибка: Невозможно построить треугольник из большего основания, боковой стороны и вычисленной диагонали (площадь близка к нулю). Это может указывать на вырожденный случай или некорректные исходные данные.");
+                    }
+                    else
+                    {
+                        // R = (x*y*z) / (4*S_triangle)
+                        double circumRadius = (largerBaseA * sideC * diagonal) / (4 * areaTriangle);
+                        Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Радиус описанной окружности R = {0:F2}", circumRadius));
+                    }
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
         }
     }
 }

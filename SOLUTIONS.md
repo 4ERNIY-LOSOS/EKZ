@@ -1,0 +1,5201 @@
+# Решения Заданий
+
+Здесь будут собраны решения для выполненных заданий.
+
+1.  [Задание 1: Площадь треугольника по формуле Герона](#задание-1-площадь-треугольника-по-формуле-герона)
+2.  [Задание 2: Корни квадратного уравнения](#задание-2-корни-квадратного-уравнения)
+3.  [Задание 3: Площадь трапеции](#задание-3-площадь-трапеции)
+4.  [Задание 4: Объем цилиндра](#задание-4-объем-цилиндра)
+5.  [Задание 5: Калькулятор](#задание-5-калькулятор)
+6.  [Задание 6: НОД трех чисел](#задание-6-нод-трех-чисел)
+7.  [Задание 7: НОК двух чисел](#задание-7-нок-двух-чисел)
+8.  [Задание 8: Сумма цифр числа](#задание-8-сумма-цифр-числа)
+9.  [Задание 9: Реверс числа](#задание-9-реверс-числа)
+10. [Задание 10: Сортировка пузырьком](#задание-10-сортировка-пузырьком)
+11. [Задание 11: Перестановка первой и последней цифры](#задание-11-перестановка-первой-и-последней-цифры)
+12. [Задание 12: Числа Фибоначчи](#задание-12-числа-фибоначчи)
+13. [Задание 13: Бинарный поиск](#задание-13-бинарный-поиск)
+14. [Задание 14: Последовательный поиск](#задание-14-последовательный-поиск)
+15. [Задание 15: Сортировка вставкой](#задание-15-сортировка-вставкой)
+16. [Задание 16: Площадь треугольника (2 стороны, угол)](#задание-16-площадь-треугольника-2-стороны-угол)
+17. [Задание 17: Радиус описанной окружности](#задание-17-радиус-описанной-окружности)
+18. [Задание 18: Радиус вписанной окружности](#задание-18-радиус-вписанной-окружности)
+19. [Задание 19: R описанной окружности (равноб. трапеция)](#задание-19-r-описанной-окружности-равноб-трапеция)
+20. [Задание 20: Диагонали параллелограмма](#задание-20-диагонали-параллелограмма)
+
+## Задание 1: Площадь треугольника по формуле Герона
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 1: Площадь треугольника (Формула Герона)"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideC"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона c"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSideA;
+    private EditText editTextSideB;
+    private EditText editTextSideC;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextSideA = findViewById(R.id.editTextSideA);
+        editTextSideB = findViewById(R.id.editTextSideB);
+        editTextSideC = findViewById(R.id.editTextSideC);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateTriangleArea();
+            }
+        });
+    }
+
+    private void calculateTriangleArea() {
+        String strA = editTextSideA.getText().toString();
+        String strB = editTextSideB.getText().toString();
+        String strC = editTextSideC.getText().toString();
+
+        if (strA.isEmpty() || strB.isEmpty() || strC.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strA);
+            double b = Double.parseDouble(strB);
+            double c = Double.parseDouble(strC);
+
+            if (a <= 0 || b <= 0 || c <= 0) {
+                textViewResult.setText("Результат: Стороны должны быть положительными числами.");
+                return;
+            }
+
+            if (a + b <= c || a + c <= b || b + c <= a) {
+                textViewResult.setText("Результат: Сумма двух сторон должна быть больше третьей стороны.");
+                return;
+            }
+
+            double p = (a + b + c) / 2;
+            double area = Math.sqrt(p * (p - a) * (p - b) * (p - c));
+
+            if (Double.isNaN(area) || Double.isInfinite(area)) {
+                textViewResult.setText("Результат: Невозможно вычислить площадь с данными сторонами.");
+            } else {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь = %.2f", area));
+            }
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 1: Вычисление площади треугольника по формуле Герона");
+
+            double a, b, c;
+
+            while (true)
+            {
+                Console.Write("Введите сторону a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a) && a > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона a должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите сторону b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b) && b > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона b должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите сторону c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c) && c > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона c должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            if (a + b <= c || a + c <= b || b + c <= a)
+            {
+                Console.WriteLine("Ошибка: Сумма двух сторон должна быть больше третьей стороны. Треугольник с такими сторонами не существует.");
+            }
+            else
+            {
+                double p = (a + b + c) / 2;
+                double area = Math.Sqrt(p * (p - a) * (p - b) * (p - c));
+
+                if (double.IsNaN(area) || double.IsInfinity(area))
+                {
+                    Console.WriteLine("Ошибка: Невозможно вычислить площадь с данными сторонами (результат NaN или бесконечность).");
+                }
+                else
+                {
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Площадь треугольника: {0:F2}", area));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 2: Корни квадратного уравнения
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 2: Корни квадратного уравнения"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextCoefficientA"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Коэффициент a"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextCoefficientB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Коэффициент b"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextCoefficientA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextCoefficientC"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Коэффициент c"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextCoefficientB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить корни"
+        app:layout_constraintTop_toBottomOf="@id/editTextCoefficientC"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextCoefficientA;
+    private EditText editTextCoefficientB;
+    private EditText editTextCoefficientC;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextCoefficientA = findViewById(R.id.editTextCoefficientA);
+        editTextCoefficientB = findViewById(R.id.editTextCoefficientB);
+        editTextCoefficientC = findViewById(R.id.editTextCoefficientC);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateQuadraticEquationRoots();
+            }
+        });
+    }
+
+    private void calculateQuadraticEquationRoots() {
+        String strA = editTextCoefficientA.getText().toString();
+        String strB = editTextCoefficientB.getText().toString();
+        String strC = editTextCoefficientC.getText().toString();
+
+        if (strA.isEmpty() || strB.isEmpty() || strC.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три коэффициента.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strA);
+            double b = Double.parseDouble(strB);
+            double c = Double.parseDouble(strC);
+
+            if (a == 0) {
+                if (b == 0) {
+                    if (c == 0) {
+                        textViewResult.setText("Результат: Бесконечное множество решений (0 = 0).");
+                    } else {
+                        textViewResult.setText("Результат: Решений нет (c = 0, где c != 0).");
+                    }
+                } else {
+                    double x = -c / b;
+                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: Линейное уравнение. Корень x = %.2f", x));
+                }
+                return;
+            }
+
+            double discriminant = b * b - 4 * a * c;
+
+            if (discriminant > 0) {
+                double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Два корня: x1 = %.2f, x2 = %.2f", x1, x2));
+            } else if (discriminant == 0) {
+                double x = -b / (2 * a);
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Один корень: x = %.2f", x));
+            } else {
+                textViewResult.setText("Результат: Действительных корней нет (дискриминант < 0).");
+            }
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для коэффициентов.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 2: Вычисление корней квадратного уравнения (ax^2 + bx + c = 0)");
+
+            double a, b, c;
+
+            Console.WriteLine("Введите коэффициенты уравнения:");
+
+            while (true)
+            {
+                Console.Write("a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод для коэффициента a. Пожалуйста, введите число.");
+            }
+
+            while (true)
+            {
+                Console.Write("b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод для коэффициента b. Пожалуйста, введите число.");
+            }
+
+            while (true)
+            {
+                Console.Write("c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод для коэффициента c. Пожалуйста, введите число.");
+            }
+
+            Console.WriteLine($"Уравнение: {a.ToString(CultureInfo.InvariantCulture)}x^2 + {b.ToString(CultureInfo.InvariantCulture)}x + {c.ToString(CultureInfo.InvariantCulture)} = 0");
+
+            if (a == 0)
+            {
+                if (b == 0)
+                {
+                    if (c == 0)
+                    {
+                        Console.WriteLine("Результат: Бесконечное множество решений (0 = 0).");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Результат: Решений нет ({c.ToString(CultureInfo.InvariantCulture)} = 0, что неверно).");
+                    }
+                }
+                else
+                {
+                    double x = -c / b;
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: Линейное уравнение. Один корень x = {0:F2}", x));
+                }
+            }
+            else
+            {
+                double discriminant = b * b - 4 * a * c;
+                Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Дискриминант D = {0:F2}", discriminant));
+
+                if (discriminant > 0)
+                {
+                    double x1 = (-b + Math.Sqrt(discriminant)) / (2 * a);
+                    double x2 = (-b - Math.Sqrt(discriminant)) / (2 * a);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: Два действительных корня: x1 = {0:F2}, x2 = {1:F2}", x1, x2));
+                }
+                else if (discriminant == 0)
+                {
+                    double x = -b / (2 * a);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: Один действительный корень: x = {0:F2}", x));
+                }
+                else
+                {
+                    Console.WriteLine("Результат: Действительных корней нет (дискриминант < 0).");
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 3: Площадь трапеции
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 3: Площадь трапеции"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextBaseA"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Основание a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextBaseB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Основание b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextBaseA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Высота h"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextBaseB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить площадь"
+        app:layout_constraintTop_toBottomOf="@id/editTextHeight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextBaseA;
+    private EditText editTextBaseB;
+    private EditText editTextHeight;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextBaseA = findViewById(R.id.editTextBaseA);
+        editTextBaseB = findViewById(R.id.editTextBaseB);
+        editTextHeight = findViewById(R.id.editTextHeight);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateTrapezoidArea();
+            }
+        });
+    }
+
+    private void calculateTrapezoidArea() {
+        String strBaseA = editTextBaseA.getText().toString();
+        String strBaseB = editTextBaseB.getText().toString();
+        String strHeight = editTextHeight.getText().toString();
+
+        if (strBaseA.isEmpty() || strBaseB.isEmpty() || strHeight.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба основания и высоту.");
+            return;
+        }
+
+        try {
+            double baseA = Double.parseDouble(strBaseA);
+            double baseB = Double.parseDouble(strBaseB);
+            double height = Double.parseDouble(strHeight);
+
+            if (baseA <= 0 || baseB <= 0 || height <= 0) {
+                textViewResult.setText("Результат: Основания и высота должны быть положительными числами.");
+                return;
+            }
+
+            double area = ((baseA + baseB) / 2) * height;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь трапеции = %.2f", area));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 3: Вычисление площади трапеции");
+
+            double baseA, baseB, height;
+
+            while (true)
+            {
+                Console.Write("Введите основание a: ");
+                string inputBaseA = Console.ReadLine();
+                if (double.TryParse(inputBaseA, NumberStyles.Any, CultureInfo.InvariantCulture, out baseA) && baseA > 0)
+                    break;
+                Console.WriteLine("Ошибка: Основание a должно быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите основание b: ");
+                string inputBaseB = Console.ReadLine();
+                if (double.TryParse(inputBaseB, NumberStyles.Any, CultureInfo.InvariantCulture, out baseB) && baseB > 0)
+                    break;
+                Console.WriteLine("Ошибка: Основание b должно быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите высоту h: ");
+                string inputHeight = Console.ReadLine();
+                if (double.TryParse(inputHeight, NumberStyles.Any, CultureInfo.InvariantCulture, out height) && height > 0)
+                    break;
+                Console.WriteLine("Ошибка: Высота h должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            double area = ((baseA + baseB) / 2) * height;
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Площадь трапеции: {0:F2}", area));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 4: Объем цилиндра
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 4: Объем цилиндра"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextRadius"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Радиус основания (r)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextHeightCylinder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Высота цилиндра (h)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextRadius"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить объем"
+        app:layout_constraintTop_toBottomOf="@id/editTextHeightCylinder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextRadius;
+    private EditText editTextHeightCylinder;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextRadius = findViewById(R.id.editTextRadius);
+        editTextHeightCylinder = findViewById(R.id.editTextHeightCylinder);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateCylinderVolume();
+            }
+        });
+    }
+
+    private void calculateCylinderVolume() {
+        String strRadius = editTextRadius.getText().toString();
+        String strHeight = editTextHeightCylinder.getText().toString();
+
+        if (strRadius.isEmpty() || strHeight.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите радиус и высоту.");
+            return;
+        }
+
+        try {
+            double radius = Double.parseDouble(strRadius);
+            double height = Double.parseDouble(strHeight);
+
+            if (radius <= 0 || height <= 0) {
+                textViewResult.setText("Результат: Радиус и высота должны быть положительными числами.");
+                return;
+            }
+            double volume = Math.PI * radius * radius * height;
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Объем цилиндра = %.2f", volume));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 4: Вычисление объема цилиндра");
+
+            double radius, height;
+
+            while (true)
+            {
+                Console.Write("Введите радиус основания (r): ");
+                string inputRadius = Console.ReadLine();
+                if (double.TryParse(inputRadius, NumberStyles.Any, CultureInfo.InvariantCulture, out radius) && radius > 0)
+                    break;
+                Console.WriteLine("Ошибка: Радиус должен быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите высоту цилиндра (h): ");
+                string inputHeight = Console.ReadLine();
+                if (double.TryParse(inputHeight, NumberStyles.Any, CultureInfo.InvariantCulture, out height) && height > 0)
+                    break;
+                Console.WriteLine("Ошибка: Высота должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            double volume = Math.PI * radius * radius * height;
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Объем цилиндра: {0:F2}", volume));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 5: Калькулятор
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 5: Калькулятор"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextNumber1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 1"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextNumber2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 2"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumber1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <LinearLayout
+        android:id="@+id/buttonsLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumber2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/buttonAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textSize="24sp"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/buttonSubtract"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:textSize="24sp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/buttonMultiply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:textSize="24sp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/buttonDivide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textSize="24sp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonsLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private EditText editTextNumber1;
+    private EditText editTextNumber2;
+    private Button buttonAdd;
+    private Button buttonSubtract;
+    private Button buttonMultiply;
+    private Button buttonDivide;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber1 = findViewById(R.id.editTextNumber1);
+        editTextNumber2 = findViewById(R.id.editTextNumber2);
+        buttonAdd = findViewById(R.id.buttonAdd);
+        buttonSubtract = findViewById(R.id.buttonSubtract);
+        buttonMultiply = findViewById(R.id.buttonMultiply);
+        buttonDivide = findViewById(R.id.buttonDivide);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonAdd.setOnClickListener(this);
+        buttonSubtract.setOnClickListener(this);
+        buttonMultiply.setOnClickListener(this);
+        buttonDivide.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        String strNum1 = editTextNumber1.getText().toString();
+        String strNum2 = editTextNumber2.getText().toString();
+
+        if (strNum1.isEmpty() || strNum2.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
+            return;
+        }
+
+        try {
+            double num1 = Double.parseDouble(strNum1);
+            double num2 = Double.parseDouble(strNum2);
+            double result = 0;
+            String operationSymbol = "";
+
+            int viewId = v.getId();
+            if (viewId == R.id.buttonAdd) {
+                result = num1 + num2;
+                operationSymbol = "+";
+            } else if (viewId == R.id.buttonSubtract) {
+                result = num1 - num2;
+                operationSymbol = "-";
+            } else if (viewId == R.id.buttonMultiply) {
+                result = num1 * num2;
+                operationSymbol = "*";
+            } else if (viewId == R.id.buttonDivide) {
+                if (num2 == 0) {
+                    textViewResult.setText("Результат: Деление на ноль невозможно.");
+                    return;
+                }
+                result = num1 / num2;
+                operationSymbol = "/";
+            }
+
+            if (!operationSymbol.isEmpty()) {
+                 if (result == (long) result) {
+                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d %s %d = %d", (long)num1, operationSymbol, (long)num2, (long)result));
+                } else {
+                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: %.2f %s %.2f = %.2f", num1, operationSymbol, num2, result));
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 5: Простой калькулятор (+, -, *, /)");
+
+            double num1, num2;
+            char operation;
+
+            while (true)
+            {
+                Console.Write("Введите первое число: ");
+                string inputNum1 = Console.ReadLine();
+                if (double.TryParse(inputNum1, NumberStyles.Any, CultureInfo.InvariantCulture, out num1))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите число.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите второе число: ");
+                string inputNum2 = Console.ReadLine();
+                if (double.TryParse(inputNum2, NumberStyles.Any, CultureInfo.InvariantCulture, out num2))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите число.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите операцию (+, -, *, /): ");
+                string inputOp = Console.ReadLine();
+                if (inputOp.Length == 1 && (inputOp[0] == '+' || inputOp[0] == '-' || inputOp[0] == '*' || inputOp[0] == '/'))
+                {
+                    operation = inputOp[0];
+                    break;
+                }
+                Console.WriteLine("Ошибка: Некорректная операция. Доступные операции: +, -, *, /");
+            }
+
+            double result = 0;
+            bool error = false;
+            string errorMessage = string.Empty;
+
+            switch (operation)
+            {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    if (num2 == 0)
+                    {
+                        error = true;
+                        errorMessage = "Ошибка: Деление на ноль невозможно.";
+                    }
+                    else
+                    {
+                        result = num1 / num2;
+                    }
+                    break;
+            }
+
+            if (error)
+            {
+                Console.WriteLine(errorMessage);
+            }
+            else
+            {
+                if (result == Math.Floor(result) && !double.IsInfinity(result) && !double.IsNaN(result))
+                {
+                     Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: {0} {1} {2} = {3}",
+                        num1.ToString(CultureInfo.InvariantCulture),
+                        operation,
+                        num2.ToString(CultureInfo.InvariantCulture),
+                        (long)result));
+                }
+                else
+                {
+                     Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Результат: {0} {1} {2} = {3:F2}",
+                        num1.ToString(CultureInfo.InvariantCulture),
+                        operation,
+                        num2.ToString(CultureInfo.InvariantCulture),
+                        result));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 6: НОД трех чисел
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 6: НОД трех чисел"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextInt1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 1"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextInt2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 2"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextInt3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 3"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить НОД"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextInt1;
+    private EditText editTextInt2;
+    private EditText editTextInt3;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextInt1 = findViewById(R.id.editTextInt1);
+        editTextInt2 = findViewById(R.id.editTextInt2);
+        editTextInt3 = findViewById(R.id.editTextInt3);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateGCDofThreeNumbers();
+            }
+        });
+    }
+
+    private int gcd(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    private void calculateGCDofThreeNumbers() {
+        String strInt1 = editTextInt1.getText().toString();
+        String strInt2 = editTextInt2.getText().toString();
+        String strInt3 = editTextInt3.getText().toString();
+
+        if (strInt1.isEmpty() || strInt2.isEmpty() || strInt3.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три числа.");
+            return;
+        }
+
+        try {
+            int num1 = Integer.parseInt(strInt1);
+            int num2 = Integer.parseInt(strInt2);
+            int num3 = Integer.parseInt(strInt3);
+
+            if (num1 == 0 && num2 == 0 && num3 == 0) {
+                textViewResult.setText("Результат: НОД(0,0,0) не определен (или 0 по соглашению). Введите хотя бы одно ненулевое число.");
+                return;
+            }
+
+            int resultGcd;
+            if (num1 == 0 && num2 == 0) {
+                resultGcd = Math.abs(num3);
+            } else if (num1 == 0 && num3 == 0) {
+                resultGcd = Math.abs(num2);
+            } else if (num2 == 0 && num3 == 0) {
+                resultGcd = Math.abs(num1);
+            } else {
+                 resultGcd = gcd(gcd(num1, num2), num3);
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОД(%d, %d, %d) = %d", num1, num2, num3, resultGcd));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static int CalculateGCD(int a, int b)
+        {
+            a = Math.Abs(a);
+            b = Math.Abs(b);
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        static int CalculateGCD(int a, int b, int c)
+        {
+            return CalculateGCD(CalculateGCD(a, b), c);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 6: Вычисление НОД трех чисел");
+
+            int num1, num2, num3;
+
+            while (true)
+            {
+                Console.Write("Введите первое целое число: ");
+                string input1 = Console.ReadLine();
+                if (int.TryParse(input1, NumberStyles.Integer, CultureInfo.InvariantCulture, out num1))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите второе целое число: ");
+                string input2 = Console.ReadLine();
+                if (int.TryParse(input2, NumberStyles.Integer, CultureInfo.InvariantCulture, out num2))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите третье целое число: ");
+                string input3 = Console.ReadLine();
+                if (int.TryParse(input3, NumberStyles.Integer, CultureInfo.InvariantCulture, out num3))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            if (num1 == 0 && num2 == 0 && num3 == 0)
+            {
+                 Console.WriteLine("Результат: НОД(0, 0, 0) = 0 (по соглашению, либо не определен).");
+            }
+            else
+            {
+                int gcdResult = CalculateGCD(num1, num2, num3);
+                Console.WriteLine($"Результат: НОД({num1}, {num2}, {num3}) = {gcdResult}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 7: НОК двух чисел
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 7: НОК двух чисел"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextInt1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 1"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextInt2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 2"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить НОК"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextInt1;
+    private EditText editTextInt2;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextInt1 = findViewById(R.id.editTextInt1);
+        editTextInt2 = findViewById(R.id.editTextInt2);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateLCMofTwoNumbers();
+            }
+        });
+    }
+
+    private int gcd(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    private void calculateLCMofTwoNumbers() {
+        String strInt1 = editTextInt1.getText().toString();
+        String strInt2 = editTextInt2.getText().toString();
+
+        if (strInt1.isEmpty() || strInt2.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
+            return;
+        }
+
+        try {
+            int num1 = Integer.parseInt(strInt1);
+            int num2 = Integer.parseInt(strInt2);
+
+            if (num1 == 0 || num2 == 0) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = 0", num1, num2));
+                return;
+            }
+
+            long product = (long) Math.abs(num1) * Math.abs(num2);
+            int commonDivisor = gcd(num1, num2);
+            long lcmResult = product / commonDivisor;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = %d", num1, num2, lcmResult));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static int CalculateGCD(int a, int b)
+        {
+            a = Math.Abs(a);
+            b = Math.Abs(b);
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        static long CalculateLCM(int a, int b)
+        {
+            if (a == 0 || b == 0)
+            {
+                return 0;
+            }
+            long product = (long)Math.Abs(a) * Math.Abs(b);
+            int gcd = CalculateGCD(a, b);
+
+            if (gcd == 0)
+            {
+                return 0;
+            }
+            return product / gcd;
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 7: Вычисление НОК двух чисел");
+
+            int num1, num2;
+
+            while (true)
+            {
+                Console.Write("Введите первое целое число: ");
+                string input1 = Console.ReadLine();
+                if (int.TryParse(input1, NumberStyles.Integer, CultureInfo.InvariantCulture, out num1))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите второе целое число: ");
+                string input2 = Console.ReadLine();
+                if (int.TryParse(input2, NumberStyles.Integer, CultureInfo.InvariantCulture, out num2))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long lcmResult = CalculateLCM(num1, num2);
+            Console.WriteLine($"Результат: НОК({num1}, {num2}) = {lcmResult}");
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 8: Сумма цифр числа
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 8: Сумма цифр числа"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextIntegerInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Введите целое число"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить сумму цифр"
+        app:layout_constraintTop_toBottomOf="@id/editTextIntegerInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextIntegerInput;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextIntegerInput = findViewById(R.id.editTextIntegerInput);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateSumOfDigits();
+            }
+        });
+    }
+
+    private void calculateSumOfDigits() {
+        String strInput = editTextIntegerInput.getText().toString();
+
+        if (strInput.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите число.");
+            return;
+        }
+
+        try {
+            long number = Long.parseLong(strInput);
+            long originalNumber = number;
+            number = Math.abs(number);
+
+            if (originalNumber == 0) {
+                 textViewResult.setText(String.format(Locale.getDefault(), "Результат: Сумма цифр числа %d = 0", originalNumber));
+                 return;
+            }
+
+            long sum = 0;
+            long tempNumber = number;
+
+            while (tempNumber > 0) {
+                sum += tempNumber % 10;
+                tempNumber /= 10;
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Сумма цифр числа %d = %d", originalNumber, sum));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 8: Вычисление суммы цифр целого числа");
+
+            long number;
+
+            while (true)
+            {
+                Console.Write("Введите целое число: ");
+                string inputText = Console.ReadLine();
+                if (long.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out number))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long originalNumber = number;
+            number = Math.Abs(number);
+
+            if (originalNumber == 0)
+            {
+                Console.WriteLine($"Сумма цифр числа {originalNumber} = 0");
+            }
+            else
+            {
+                long sumOfDigits = 0;
+                long tempNumber = number;
+
+                while (tempNumber > 0)
+                {
+                    sumOfDigits += tempNumber % 10;
+                    tempNumber /= 10;
+                }
+                Console.WriteLine($"Сумма цифр числа {originalNumber} = {sumOfDigits}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 9: Реверс числа
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 9: Реверс числа"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextIntegerInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Введите целое число"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Реверс числа"
+        app:layout_constraintTop_toBottomOf="@id/editTextIntegerInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextIntegerInput;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextIntegerInput = findViewById(R.id.editTextIntegerInput);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reverseNumberDigits();
+            }
+        });
+    }
+
+    private void reverseNumberDigits() {
+        String strInput = editTextIntegerInput.getText().toString();
+
+        if (strInput.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите число.");
+            return;
+        }
+
+        if (strInput.equals("-")) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+            return;
+        }
+
+        try {
+            long number = Long.parseLong(strInput);
+            long originalNumber = number;
+            long reversedNumber = 0;
+            boolean isNegative = false;
+
+            if (number == 0) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Реверс числа %d = 0", originalNumber));
+                return;
+            }
+
+            if (number < 0) {
+                isNegative = true;
+                number = -number;
+            }
+
+            while (number > 0) {
+                long digit = number % 10;
+                if (reversedNumber > (Long.MAX_VALUE - digit) / 10) {
+                    textViewResult.setText("Результат: Переполнение при реверсе числа.");
+                    return;
+                }
+                reversedNumber = reversedNumber * 10 + digit;
+                number /= 10;
+            }
+
+            if (isNegative) {
+                reversedNumber = -reversedNumber;
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Реверс числа %d = %d", originalNumber, reversedNumber));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 9: Реверс числа");
+
+            long number;
+
+            while (true)
+            {
+                Console.Write("Введите целое число: ");
+                string inputText = Console.ReadLine();
+                if (inputText == "-")
+                {
+                    Console.WriteLine("Ошибка: Введен только знак минус. Пожалуйста, введите корректное целое число.");
+                    continue;
+                }
+                if (long.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out number))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long originalNumber = number;
+            long reversedNumber = 0;
+            bool isNegative = false;
+
+            if (number == 0)
+            {
+                Console.WriteLine($"Реверс числа {originalNumber} = 0");
+            }
+            else
+            {
+                if (number < 0)
+                {
+                    isNegative = true;
+                    if (number == long.MinValue)
+                    {
+                         Console.WriteLine($"Число {originalNumber} (long.MinValue) не может быть корректно обработано стандартным Math.Abs. Реверс может быть некорректен.");
+                         string s = originalNumber.ToString(CultureInfo.InvariantCulture);
+                         char[] charArray = s.Substring(1).ToCharArray();
+                         Array.Reverse(charArray);
+                         Console.WriteLine($"Реверс числа {originalNumber} (строковый) = -{new string(charArray)}");
+                         Console.WriteLine("\nНажмите любую клавишу для выхода...");
+                         Console.ReadKey();
+                         return;
+                    }
+                    number = Math.Abs(number);
+                }
+
+                long tempNumber = number;
+                bool overflow = false;
+                while (tempNumber > 0)
+                {
+                    long digit = tempNumber % 10;
+                    if (reversedNumber > (long.MaxValue - digit) / 10)
+                    {
+                        overflow = true;
+                        break;
+                    }
+                    reversedNumber = reversedNumber * 10 + digit;
+                    tempNumber /= 10;
+                }
+
+                if (overflow)
+                {
+                    Console.WriteLine($"Ошибка: Переполнение при реверсе числа {originalNumber}.");
+                }
+                else
+                {
+                    if (isNegative)
+                    {
+                        reversedNumber = -reversedNumber;
+                    }
+                    Console.WriteLine($"Реверс числа {originalNumber} = {reversedNumber}");
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 10: Сортировка пузырьком
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 10: Сортировка пузырьком"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextArrayInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Введите числа через запятую (напр., 5,1,4,2,8)"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="numbers" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сортировать"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextArrayInput;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performBubbleSort();
+            }
+        });
+    }
+
+    private void performBubbleSort() {
+        String inputText = editTextArrayInput.getText().toString();
+        if (inputText.isEmpty()) {
+            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
+            return;
+        }
+
+        String[] stringArray = inputText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+             textViewResult.setText("Результат: Введите числа для сортировки.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа через запятую или пробел.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+
+        int n = numbers.length;
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (numbers[j] > numbers[j + 1]) {
+                    int temp = numbers[j];
+                    numbers[j] = numbers[j + 1];
+                    numbers[j + 1] = temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped) {
+                break;
+            }
+        }
+
+        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 10: Сортировка массива методом пузырька");
+
+            List<int> numbersList = new List<int>();
+            bool validInput = false;
+            int[] numbers = null;
+
+            while (!validInput)
+            {
+                Console.Write("Введите числа через запятую или пробел (напр., 5,1,4,2,8): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    validInput = true;
+                }
+                else if (currentParseSuccess && !numbersList.Any())
+                {
+                     Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            numbers = numbersList.ToArray();
+            Console.WriteLine("Исходный массив: " + string.Join(", ", numbers));
+
+            int n = numbers.Length;
+            bool swapped;
+            for (int i = 0; i < n - 1; i++)
+            {
+                swapped = false;
+                for (int j = 0; j < n - 1 - i; j++)
+                {
+                    if (numbers[j] > numbers[j + 1])
+                    {
+                        int temp = numbers[j];
+                        numbers[j] = numbers[j + 1];
+                        numbers[j + 1] = temp;
+                        swapped = true;
+                    }
+                }
+                if (!swapped)
+                {
+                    break;
+                }
+            }
+
+            Console.WriteLine("Отсортированный массив: " + string.Join(", ", numbers));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 11: Перестановка первой и последней цифры
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 11: Перестановка первой и последней цифры"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextIntegerInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Введите целое число"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Переставить цифры"
+        app:layout_constraintTop_toBottomOf="@id/editTextIntegerInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextIntegerInput;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextIntegerInput = findViewById(R.id.editTextIntegerInput);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swapFirstAndLastDigits();
+            }
+        });
+    }
+
+    private void swapFirstAndLastDigits() {
+        String strInput = editTextIntegerInput.getText().toString();
+
+        if (strInput.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите число.");
+            return;
+        }
+        if (strInput.equals("-")) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+            return;
+        }
+
+        try {
+            long number = Long.parseLong(strInput);
+            long originalNumber = number;
+            boolean isNegative = false;
+
+            if (number < 0) {
+                isNegative = true;
+                number = -number;
+            }
+
+            if (number < 10) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d (не изменилось)", originalNumber));
+                return;
+            }
+
+            long lastDigit = number % 10;
+            long powerOf10 = 1;
+            long temp = number;
+            while (temp >= 10) {
+                temp /= 10;
+                powerOf10 *= 10;
+            }
+            long firstDigit = number / powerOf10;
+
+            long middlePartWithLastDigit = number % powerOf10;
+            long middlePart = middlePartWithLastDigit / 10;
+
+            long newNumber = lastDigit * powerOf10 + middlePart * 10 + firstDigit;
+
+            if (isNegative) {
+                newNumber = -newNumber;
+            }
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Исходное: %d, Новое: %d", originalNumber, newNumber));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 11: Перестановка первой и последней цифры числа");
+
+            long number;
+
+            while (true)
+            {
+                Console.Write("Введите целое число: ");
+                string inputText = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(inputText) || inputText == "-")
+                {
+                    Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+                    continue;
+                }
+                if (long.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out number))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            long originalNumber = number;
+            bool isNegative = false;
+
+            if (number < 0)
+            {
+                isNegative = true;
+                if (number == long.MinValue)
+                {
+                    Console.WriteLine($"Число {originalNumber} (long.MinValue) не может быть корректно обработано стандартным Math.Abs. Перестановка не будет выполнена.");
+                    Console.WriteLine("\nНажмите любую клавишу для выхода...");
+                    Console.ReadKey();
+                    return;
+                }
+                number = Math.Abs(number);
+            }
+
+            if (number < 10)
+            {
+                Console.WriteLine($"Результат: {originalNumber} (число однозначное, не изменилось)");
+            }
+            else
+            {
+                long lastDigit = number % 10;
+
+                long temp = number;
+                long powerOf10 = 1;
+                while (temp >= 10)
+                {
+                    temp /= 10;
+                    powerOf10 *= 10;
+                }
+                long firstDigit = number / powerOf10;
+
+                long middlePartWithLastRemoved = number / 10;
+                long middlePart = middlePartWithLastRemoved % (powerOf10 / 10);
+
+                long newNumberConstructed = lastDigit * powerOf10 + middlePart * 10 + firstDigit;
+
+                if (isNegative)
+                {
+                    newNumberConstructed = -newNumberConstructed;
+                }
+                Console.WriteLine($"Результат: Исходное: {originalNumber}, Новое: {newNumberConstructed}");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 12: Числа Фибоначчи
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 12: Числа Фибоначчи"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextFibonacciCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Количество чисел Фибоначчи (N)"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сгенерировать"
+        app:layout_constraintTop_toBottomOf="@id/editTextFibonacciCount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextFibonacciCount;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextFibonacciCount = findViewById(R.id.editTextFibonacciCount);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateFibonacciSequence();
+            }
+        });
+    }
+
+    private void generateFibonacciSequence() {
+        String strN = editTextFibonacciCount.getText().toString();
+
+        if (strN.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите количество чисел.");
+            return;
+        }
+
+        try {
+            int n = Integer.parseInt(strN);
+
+            if (n < 0) {
+                textViewResult.setText("Результат: Количество чисел не может быть отрицательным.");
+                return;
+            }
+            if (n == 0) {
+                textViewResult.setText("Результат: Последовательность пуста (0 чисел).");
+                return;
+            }
+            if (n > 92) {
+                textViewResult.setText("Результат: Слишком большое N. Пожалуйста, введите N <= 92, чтобы избежать переполнения long.");
+                return;
+            }
+
+            List<Long> fibonacciSequence = new ArrayList<>();
+            if (n >= 1) {
+                fibonacciSequence.add(0L);
+            }
+            if (n >= 2) {
+                fibonacciSequence.add(1L);
+            }
+
+            for (int i = 2; i < n; i++) {
+                if (fibonacciSequence.get(i - 2) > 0 && fibonacciSequence.get(i - 1) > Long.MAX_VALUE - fibonacciSequence.get(i - 2) )
+                {
+                    textViewResult.setText("Обнаружено переполнение при генерации последовательности.");
+                    return;
+                }
+                if (fibonacciSequence.get(i - 2) < 0 && fibonacciSequence.get(i - 1) < Long.MIN_VALUE - fibonacciSequence.get(i - 2) )
+                {
+                     textViewResult.setText("Обнаружено антипереполнение при генерации последовательности.");
+                    return;
+                }
+                long nextFib = fibonacciSequence.get(i - 1) + fibonacciSequence.get(i - 2);
+                fibonacciSequence.add(nextFib);
+            }
+            textViewResult.setText("Результат: " + android.text.TextUtils.join(", ", fibonacciSequence));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число для N.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq; // Для string.Join
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 12: Генерация последовательности чисел Фибоначчи");
+
+            int n;
+
+            while (true)
+            {
+                Console.Write("Введите количество чисел Фибоначчи (N): ");
+                string inputText = Console.ReadLine();
+                if (int.TryParse(inputText, NumberStyles.Integer, CultureInfo.InvariantCulture, out n))
+                {
+                    if (n < 0)
+                    {
+                        Console.WriteLine("Ошибка: Количество чисел не может быть отрицательным.");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+                }
+            }
+
+            if (n == 0)
+            {
+                Console.WriteLine("Результат: Последовательность пуста (0 чисел).");
+            }
+            else if (n > 92)
+            {
+                 Console.WriteLine("Результат: Слишком большое N. Пожалуйста, введите N <= 92, чтобы избежать переполнения long.");
+            }
+            else
+            {
+                List<long> fibonacciSequence = new List<long>();
+                if (n >= 1)
+                {
+                    fibonacciSequence.Add(0L);
+                }
+                if (n >= 2)
+                {
+                    fibonacciSequence.Add(1L);
+                }
+
+                for (int i = 2; i < n; i++)
+                {
+                    if (fibonacciSequence[i - 2] > 0 && fibonacciSequence[i - 1] > long.MaxValue - fibonacciSequence[i - 2] )
+                    {
+                        Console.WriteLine("Обнаружено переполнение при генерации последовательности.");
+                        break;
+                    }
+                     if (fibonacciSequence[i - 2] < 0 && fibonacciSequence[i - 1] < long.MinValue - fibonacciSequence[i - 2] )
+                    {
+                        Console.WriteLine("Обнаружено антипереполнение при генерации последовательности.");
+                        break;
+                    }
+                    long nextFib = fibonacciSequence[i - 1] + fibonacciSequence[i - 2];
+                    fibonacciSequence.Add(nextFib);
+                }
+                Console.WriteLine("Результат: " + string.Join(", ", fibonacciSequence));
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 13: Бинарный поиск
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 13: Бинарный поиск"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSortedArrayInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Отсортированный массив (напр., 1,2,5,8,12)"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="numbers" />
+
+    <EditText
+        android:id="@+id/editTextSearchElement"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Искомый элемент"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextSortedArrayInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Найти элемент"
+        app:layout_constraintTop_toBottomOf="@id/editTextSearchElement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSortedArrayInput;
+    private EditText editTextSearchElement;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextSortedArrayInput = findViewById(R.id.editTextSortedArrayInput);
+        editTextSearchElement = findViewById(R.id.editTextSearchElement);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performBinarySearch();
+            }
+        });
+    }
+
+    private void performBinarySearch() {
+        String arrayText = editTextSortedArrayInput.getText().toString();
+        String elementText = editTextSearchElement.getText().toString();
+
+        if (arrayText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для массива пустое. Введите отсортированный массив.");
+            return;
+        }
+        if (elementText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для искомого элемента пустое. Введите элемент.");
+            return;
+        }
+
+        String[] stringArray = arrayText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+            textViewResult.setText("Результат: Введите числа для массива.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в массиве: '%s'. Введите корректные целые числа.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Массив не содержит чисел.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+        int searchElement;
+        try {
+            searchElement = Integer.parseInt(elementText.trim());
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Искомый элемент введен некорректно.");
+            return;
+        }
+
+        for (int i = 0; i < numbers.length - 1; i++) {
+            if (numbers[i] > numbers[i+1]) {
+                textViewResult.setText("Результат: Массив не отсортирован! Бинарный поиск требует отсортированного массива.\nПожалуйста, отсортируйте: " + Arrays.toString(numbers));
+                return;
+            }
+        }
+
+        int low = 0;
+        int high = numbers.length - 1;
+        int index = -1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (numbers[mid] == searchElement) {
+                index = mid;
+                break;
+            } else if (numbers[mid] < searchElement) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        if (index != -1) {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d найден на позиции %d (индекс).", searchElement, index));
+        } else {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d не найден в массиве.", searchElement));
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static int BinarySearch(int[] arr, int elementToSearch)
+        {
+            int low = 0;
+            int high = arr.Length - 1;
+            int index = -1;
+
+            while (low <= high)
+            {
+                int mid = low + (high - low) / 2;
+                if (arr[mid] == elementToSearch)
+                {
+                    index = mid;
+                    break;
+                }
+                else if (arr[mid] < elementToSearch)
+                {
+                    low = mid + 1;
+                }
+                else
+                {
+                    high = mid - 1;
+                }
+            }
+            return index;
+        }
+
+        static bool IsArraySorted(int[] arr)
+        {
+            for (int i = 0; i < arr.Length - 1; i++)
+            {
+                if (arr[i] > arr[i + 1])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 13: Бинарный поиск элемента в отсортированном массиве");
+
+            List<int> numbersList = new List<int>();
+            bool validArrayInput = false;
+            int[] numbers = null;
+
+            while (!validArrayInput)
+            {
+                Console.Write("Введите отсортированный массив чисел через запятую или пробел (напр., 1,5,8,12,15): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    numbers = numbersList.ToArray();
+                    if (!IsArraySorted(numbers))
+                    {
+                        Console.WriteLine("Ошибка: Введенный массив не отсортирован. Бинарный поиск требует отсортированного массива.");
+                        Console.WriteLine("Пожалуйста, введите отсортированный массив.");
+                    }
+                    else
+                    {
+                        validArrayInput = true;
+                    }
+                }
+                else if (currentParseSuccess && !numbersList.Any())
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            Console.WriteLine("Введенный массив: " + string.Join(", ", numbers));
+            int searchElement;
+            while (true)
+            {
+                Console.Write("Введите искомый элемент (целое число): ");
+                string inputElement = Console.ReadLine();
+                if (int.TryParse(inputElement, NumberStyles.Integer, CultureInfo.InvariantCulture, out searchElement))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            int foundIndex = BinarySearch(numbers, searchElement);
+
+            if (foundIndex != -1)
+            {
+                Console.WriteLine($"Элемент {searchElement} найден на позиции {foundIndex} (индекс).");
+            }
+            else
+            {
+                Console.WriteLine($"Элемент {searchElement} не найден в массиве.");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 14: Последовательный поиск
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 14: Последовательный поиск"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextArrayInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Массив чисел (напр., 5,1,8,2,9)"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="numbers" />
+
+    <EditText
+        android:id="@+id/editTextSearchElement"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Искомый элемент"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Найти (послед.)"
+        app:layout_constraintTop_toBottomOf="@id/editTextSearchElement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextArrayInput;
+    private EditText editTextSearchElement;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        editTextSearchElement = findViewById(R.id.editTextSearchElement);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performLinearSearch();
+            }
+        });
+    }
+
+    private void performLinearSearch() {
+        String arrayText = editTextArrayInput.getText().toString();
+        String elementText = editTextSearchElement.getText().toString();
+
+        if (arrayText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для массива пустое. Введите массив.");
+            return;
+        }
+        if (elementText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для искомого элемента пустое. Введите элемент.");
+            return;
+        }
+
+        String[] stringArray = arrayText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+            textViewResult.setText("Результат: Введите числа для массива.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в массиве: '%s'. Введите корректные целые числа.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Массив не содержит чисел.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+        int searchElement;
+        try {
+            searchElement = Integer.parseInt(elementText.trim());
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Искомый элемент введен некорректно.");
+            return;
+        }
+
+        int index = -1;
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == searchElement) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1) {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d найден на позиции %d (индекс).", searchElement, index));
+        } else {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d не найден в массиве.", searchElement));
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static int LinearSearch(int[] arr, int elementToSearch)
+        {
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (arr[i] == elementToSearch)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 14: Последовательный поиск элемента в массиве");
+
+            List<int> numbersList = new List<int>();
+            bool validInput = false;
+            int[] numbers = null;
+
+            while (!validInput)
+            {
+                Console.Write("Введите массив чисел через запятую или пробел (напр., 5,1,8,2,9): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    numbers = numbersList.ToArray();
+                    validInput = true;
+                }
+                else if (currentParseSuccess && !numbersList.Any())
+                {
+                     Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            Console.WriteLine("Введенный массив: " + string.Join(", ", numbers));
+            int searchElement;
+            while (true)
+            {
+                Console.Write("Введите искомый элемент (целое число): ");
+                string inputElement = Console.ReadLine();
+                if (int.TryParse(inputElement, NumberStyles.Integer, CultureInfo.InvariantCulture, out searchElement))
+                    break;
+                Console.WriteLine("Ошибка: Некорректный ввод. Пожалуйста, введите целое число.");
+            }
+
+            int foundIndex = LinearSearch(numbers, searchElement);
+
+            if (foundIndex != -1)
+            {
+                Console.WriteLine($"Элемент {searchElement} найден на позиции {foundIndex} (индекс первого вхождения).");
+            }
+            else
+            {
+                Console.WriteLine($"Элемент {searchElement} не найден в массиве.");
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 15: Сортировка вставкой
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 15: Сортировка вставкой"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextArrayInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Массив (напр., 5,1,4,2,8)"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="numbers" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сортировать вставкой"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextArrayInput;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performInsertionSort();
+            }
+        });
+    }
+
+    private void performInsertionSort() {
+        String inputText = editTextArrayInput.getText().toString();
+        if (inputText.isEmpty()) {
+            textViewResult.setText("Результат: Поле ввода пустое. Введите числа.");
+            return;
+        }
+
+        String[] stringArray = inputText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+            textViewResult.setText("Результат: Введите числа для сортировки.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в числе '%s'. Введите корректные целые числа.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Не найдено чисел для сортировки.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+
+        for (int i = 1; i < numbers.length; i++) {
+            int key = numbers[i];
+            int j = i - 1;
+
+            while (j >= 0 && numbers[j] > key) {
+                numbers[j + 1] = numbers[j];
+                j = j - 1;
+            }
+            numbers[j + 1] = key;
+        }
+
+        textViewResult.setText(String.format(Locale.getDefault(),"Результат: %s", Arrays.toString(numbers)));
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void InsertionSort(int[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                int key = arr[i];
+                int j = i - 1;
+
+                while (j >= 0 && arr[j] > key)
+                {
+                    arr[j + 1] = arr[j];
+                    j = j - 1;
+                }
+                arr[j + 1] = key;
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 15: Сортировка массива методом вставки");
+
+            List<int> numbersList = new List<int>();
+            bool validInput = false;
+            int[] numbers = null;
+
+            while (!validInput)
+            {
+                Console.Write("Введите массив чисел через запятую или пробел (напр., 5,1,4,2,8): ");
+                string inputText = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(inputText))
+                {
+                    Console.WriteLine("Ошибка: Ввод не должен быть пустым. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                string[] stringArray = inputText.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (stringArray.Length == 0)
+                {
+                    Console.WriteLine("Ошибка: Не введено ни одного числа. Пожалуйста, попробуйте снова.");
+                    continue;
+                }
+
+                numbersList.Clear();
+                bool currentParseSuccess = true;
+                foreach (string s in stringArray)
+                {
+                    if (int.TryParse(s.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int num))
+                    {
+                        numbersList.Add(num);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Ошибка: Не удалось распознать '{s}' как целое число. Пожалуйста, проверьте ввод и попробуйте снова.");
+                        currentParseSuccess = false;
+                        break;
+                    }
+                }
+
+                if (currentParseSuccess && numbersList.Any())
+                {
+                    numbers = numbersList.ToArray();
+                    validInput = true;
+                }
+                 else if (currentParseSuccess && !numbersList.Any())
+                {
+                     Console.WriteLine("Ошибка: Не введено ни одного числа после обработки разделителей. Пожалуйста, попробуйте снова.");
+                }
+            }
+
+            Console.WriteLine("Исходный массив: " + string.Join(", ", numbers));
+            InsertionSort(numbers);
+            Console.WriteLine("Отсортированный массив: " + string.Join(", ", numbers));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 16: Площадь треугольника (2 стороны, угол)
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 16: Площадь треугольника (2 стороны, угол)"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA_Task16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB_Task16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextAngleDegrees"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Угол γ (в градусах)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить площадь"
+        app:layout_constraintTop_toBottomOf="@id/editTextAngleDegrees"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSideA_Task16;
+    private EditText editTextSideB_Task16;
+    private EditText editTextAngleDegrees;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextSideA_Task16 = findViewById(R.id.editTextSideA_Task16);
+        editTextSideB_Task16 = findViewById(R.id.editTextSideB_Task16);
+        editTextAngleDegrees = findViewById(R.id.editTextAngleDegrees);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateTriangleAreaBySidesAndAngle();
+            }
+        });
+    }
+
+    private void calculateTriangleAreaBySidesAndAngle() {
+        String strSideA = editTextSideA_Task16.getText().toString();
+        String strSideB = editTextSideB_Task16.getText().toString();
+        String strAngle = editTextAngleDegrees.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strAngle.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите обе стороны и угол.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double angleDegrees = Double.parseDouble(strAngle);
+
+            if (a <= 0 || b <= 0) {
+                textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
+                return;
+            }
+            if (angleDegrees <= 0 || angleDegrees >= 180) {
+                textViewResult.setText("Результат: Угол должен быть больше 0 и меньше 180 градусов.");
+                return;
+            }
+
+            double angleRadians = Math.toRadians(angleDegrees);
+            double area = 0.5 * a * b * Math.sin(angleRadians);
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь треугольника = %.2f", area));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 16: Вычисление площади треугольника по двум сторонам и углу между ними");
+
+            double sideA, sideB, angleDegrees;
+
+            while (true)
+            {
+                Console.Write("Введите длину стороны a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out sideA) && sideA > 0)
+                    break;
+                Console.WriteLine("Ошибка: Длина стороны a должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите длину стороны b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out sideB) && sideB > 0)
+                    break;
+                Console.WriteLine("Ошибка: Длина стороны b должна быть положительным числом. Пожалуйста, попробуйте снова.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите угол γ между сторонами a и b (в градусах): ");
+                string inputAngle = Console.ReadLine();
+                if (double.TryParse(inputAngle, NumberStyles.Any, CultureInfo.InvariantCulture, out angleDegrees) && angleDegrees > 0 && angleDegrees < 180)
+                    break;
+                Console.WriteLine("Ошибка: Угол должен быть больше 0 и меньше 180 градусов. Пожалуйста, попробуйте снова.");
+            }
+
+            double angleRadians = Math.PI * angleDegrees / 180.0;
+            double area = 0.5 * sideA * sideB * Math.Sin(angleRadians);
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Площадь треугольника: {0:F2}", area));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 17: Радиус описанной окружности
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 17: Радиус описанной окружности"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideC_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона c"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить радиус R"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSideA_Task17;
+    private EditText editTextSideB_Task17;
+    private EditText editTextSideC_Task17;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextSideA_Task17 = findViewById(R.id.editTextSideA_Task17);
+        editTextSideB_Task17 = findViewById(R.id.editTextSideB_Task17);
+        editTextSideC_Task17 = findViewById(R.id.editTextSideC_Task17);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateCircumcircleRadius(); // Corrected to call circumcircle for Task 17
+            }
+        });
+    }
+
+    private double calculateHeronArea(double sA, double sB, double sC) {
+        if (sA + sB <= sC || sA + sC <= sB || sB + sC <= sA) {
+            return -1;
+        }
+        double p = (sA + sB + sC) / 2.0;
+        double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
+        if (areaSquared < -1e-9) return -1;
+        if (areaSquared < 0) areaSquared = 0;
+        return Math.sqrt(areaSquared);
+    }
+
+    private void calculateCircumcircleRadius() { // Renamed and logic for R
+        String strSideA = editTextSideA_Task17.getText().toString();
+        String strSideB = editTextSideB_Task17.getText().toString();
+        String strSideC = editTextSideC_Task17.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strSideC.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double c = Double.parseDouble(strSideC);
+
+            if (a <= 0 || b <= 0 || c <= 0) {
+                textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
+                return;
+            }
+
+            double area = calculateHeronArea(a, b, c);
+
+            if (area < 0) {
+                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник.");
+                return;
+            }
+            if (area == 0) {
+                 textViewResult.setText("Результат: Площадь треугольника равна нулю (вырожденный треугольник). Радиус описанной окружности не определен (бесконечность).");
+                return;
+            }
+
+            // R = (a*b*c) / (4*Area)
+            double circumRadius = (a * b * c) / (4 * area);
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус описанной окружности R = %.2f", circumRadius));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static double CalculateHeronArea(double sA, double sB, double sC, out double semiPerimeter)
+        {
+            semiPerimeter = (sA + sB + sC) / 2.0;
+            double areaSquared = semiPerimeter * (semiPerimeter - sA) * (semiPerimeter - sB) * (semiPerimeter - sC);
+
+            if (areaSquared < 0)
+            {
+                return -1;
+            }
+            return Math.Sqrt(areaSquared);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 17: Вычисление радиуса ОПИСАННОЙ окружности около треугольника");
+
+            double a, b, c;
+
+            while (true)
+            {
+                Console.Write("Введите сторону a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a) && a > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона a должна быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите сторону b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b) && b > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона b должна быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите сторону c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c) && c > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона c должна быть положительным числом.");
+            }
+
+            if (a + b <= c || a + c <= b || b + c <= a)
+            {
+                Console.WriteLine("Ошибка: Сумма двух сторон должна быть больше третьей. Треугольник с такими сторонами не существует.");
+            }
+            else
+            {
+                double semiP;
+                double area = CalculateHeronArea(a, b, c, out semiP);
+
+                if (area < 0)
+                {
+                     Console.WriteLine("Ошибка: Невозможно образовать треугольник с данными сторонами (проверьте неравенство треугольника).");
+                }
+                else if (area == 0)
+                {
+                    Console.WriteLine("Результат: Площадь треугольника равна нулю (вырожденный треугольник). Радиус описанной окружности не определен (бесконечность).");
+                }
+                else
+                {
+                    double circumRadius = (a * b * c) / (4 * area);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Радиус описанной окружности R = {0:F2}", circumRadius));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 18: Радиус вписанной окружности
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 18: Радиус вписанной окружности"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideC_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона c"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить радиус r"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSideA_Task17; // IDs are kept from original for Task 18 as well
+    private EditText editTextSideB_Task17;
+    private EditText editTextSideC_Task17;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main); // Assumes layout is updated for Task 18
+
+        editTextSideA_Task17 = findViewById(R.id.editTextSideA_Task17);
+        editTextSideB_Task17 = findViewById(R.id.editTextSideB_Task17);
+        editTextSideC_Task17 = findViewById(R.id.editTextSideC_Task17);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateIncircleRadius();
+            }
+        });
+    }
+
+    private double calculateHeronArea(double sA, double sB, double sC) {
+        if (sA + sB <= sC || sA + sC <= sB || sB + sC <= sA) {
+            return -1;
+        }
+        double p = (sA + sB + sC) / 2.0;
+        double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
+        if (areaSquared < -1e-9) return -1;
+        if (areaSquared < 0) areaSquared = 0;
+        return Math.sqrt(areaSquared);
+    }
+
+    private void calculateIncircleRadius() {
+        String strSideA = editTextSideA_Task17.getText().toString();
+        String strSideB = editTextSideB_Task17.getText().toString();
+        String strSideC = editTextSideC_Task17.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strSideC.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double c = Double.parseDouble(strSideC);
+
+            if (a <= 0 || b <= 0 || c <= 0) {
+                textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
+                return;
+            }
+
+            double area = calculateHeronArea(a, b, c);
+
+            if (area < 0) {
+                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник.");
+                return;
+            }
+            if (area == 0) {
+                 textViewResult.setText("Результат: Площадь треугольника равна нулю (вырожденный треугольник), радиус вписанной окружности не определен / равен 0.");
+                return;
+            }
+
+            double semiPerimeter = (a + b + c) / 2.0;
+
+            if (semiPerimeter == 0) {
+                 textViewResult.setText("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+                return;
+            }
+
+            double radius = area / semiPerimeter;
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус вписанной окружности r = %.2f", radius));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static double CalculateHeronArea(double sA, double sB, double sC, out double semiPerimeter)
+        {
+            semiPerimeter = (sA + sB + sC) / 2.0;
+            double areaSquared = semiPerimeter * (semiPerimeter - sA) * (semiPerimeter - sB) * (semiPerimeter - sC);
+
+            if (areaSquared < -1e-9)
+            {
+                return -1;
+            }
+            if (areaSquared < 0) areaSquared = 0;
+            return Math.Sqrt(areaSquared);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 18: Вычисление радиуса ВПИСАННОЙ окружности в треугольник");
+
+            double a, b, c;
+
+            while (true)
+            {
+                Console.Write("Введите сторону a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out a) && a > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона a должна быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите сторону b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out b) && b > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона b должна быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите сторону c: ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out c) && c > 0)
+                    break;
+                Console.WriteLine("Ошибка: Сторона c должна быть положительным числом.");
+            }
+
+            if (a + b <= c || a + c <= b || b + c <= a)
+            {
+                Console.WriteLine("Ошибка: Сумма двух сторон должна быть больше третьей. Треугольник с такими сторонами не существует.");
+            }
+            else
+            {
+                double semiPerimeter;
+                double area = CalculateHeronArea(a, b, c, out semiPerimeter);
+
+                if (area < 0)
+                {
+                     Console.WriteLine("Ошибка: С данными сторонами невозможно образовать треугольник (проверьте неравенство треугольника).");
+                }
+                else if (area == 0)
+                {
+                     Console.WriteLine("Результат: Площадь треугольника равна нулю (вырожденный треугольник). Радиус вписанной окружности не определен / равен 0.");
+                }
+                else if (semiPerimeter == 0)
+                {
+                    Console.WriteLine("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+                }
+                else
+                {
+                    double inRadius = area / semiPerimeter;
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Радиус вписанной окружности r = {0:F2}", inRadius));
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 19: R описанной окружности (равноб. трапеция)
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Задание 19: R описанной окружности (равноб. трапеция)"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextLargerBaseA"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Большее основание (a)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSmallerBaseB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Меньшее основание (b)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextLargerBaseA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideC_Trapezoid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Боковая сторона (c)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSmallerBaseB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить радиус R"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Trapezoid"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextLargerBaseA;
+    private EditText editTextSmallerBaseB;
+    private EditText editTextSideC_Trapezoid;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextLargerBaseA = findViewById(R.id.editTextLargerBaseA);
+        editTextSmallerBaseB = findViewById(R.id.editTextSmallerBaseB);
+        editTextSideC_Trapezoid = findViewById(R.id.editTextSideC_Trapezoid);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateTrapezoidCircumcircleRadius();
+            }
+        });
+    }
+
+    private double calculateHeronArea(double s1, double s2, double s3) {
+        if (s1 + s2 <= s3 || s1 + s3 <= s2 || s2 + s3 <= s1) {
+            return -1;
+        }
+        double p = (s1 + s2 + s3) / 2.0;
+        double areaSquared = p * (p - s1) * (p - s2) * (p - s3);
+        if (areaSquared < -1e-9) return -1;
+        if (areaSquared < 0) areaSquared = 0;
+        return Math.sqrt(areaSquared);
+    }
+
+    private void calculateTrapezoidCircumcircleRadius() {
+        String strA = editTextLargerBaseA.getText().toString();
+        String strB = editTextSmallerBaseB.getText().toString();
+        String strC_side = editTextSideC_Trapezoid.getText().toString();
+
+        if (strA.isEmpty() || strB.isEmpty() || strC_side.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три значения: основания и боковую сторону.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strA);
+            double b = Double.parseDouble(strB);
+            double c_side = Double.parseDouble(strC_side);
+
+            if (a <= 0 || b <= 0 || c_side <= 0) {
+                textViewResult.setText("Результат: Все длины должны быть положительными числами.");
+                return;
+            }
+            if (a == b) {
+                 textViewResult.setText("Результат: Основания равны. Для прямоугольника R = sqrt(c_side^2 + a*b) / 2. Убедитесь, что это равнобокая трапеция (прямоугольник).");
+            } else if (a < b) {
+                 textViewResult.setText("Результат: Большее основание (a) должно быть больше или равно меньшему (b). Поменяйте их местами, если необходимо.");
+                return;
+            }
+
+            double d_diag_squared = c_side * c_side + a * b;
+            if (d_diag_squared < 0) {
+                textViewResult.setText("Результат: Невозможно вычислить диагональ (отрицательное подкоренное выражение).");
+                return;
+            }
+            double d_diag = Math.sqrt(d_diag_squared);
+
+            double halfDiffBasesSq = ((a - b) / 2.0) * ((a - b) / 2.0);
+            if (c_side * c_side < halfDiffBasesSq - 1e-9) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Невозможно построить равнобокую трапецию с такими сторонами (c^2 < ((a-b)/2)^2). Боковая сторона %.2f слишком коротка для оснований %.2f и %.2f.", c_side, a, b));
+                return;
+            }
+
+            double areaTriangle = calculateHeronArea(a, c_side, d_diag);
+
+            if (areaTriangle <= 1e-9) {
+                textViewResult.setText("Результат: Невозможно построить треугольник из большего основания (a), боковой стороны (c) и вычисленной диагонали (d). Это может означать вырожденный случай или некорректные исходные данные для трапеции. Площадь треугольника близка к нулю.");
+                return;
+            }
+
+            double radius = (a * c_side * d_diag) / (4 * areaTriangle);
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус описанной окружности R = %.2f", radius));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static double CalculateHeronArea(double s1, double s2, double s3)
+        {
+            if (s1 + s2 <= s3 || s1 + s3 <= s2 || s2 + s3 <= s1) {
+                return -1;
+            }
+            double p = (s1 + s2 + s3) / 2.0;
+            double areaSquared = p * (p - s1) * (p - s2) * (p - s3);
+            if (areaSquared < -1e-9) return -1;
+            if (areaSquared < 0) areaSquared = 0;
+            return Math.Sqrt(areaSquared);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 19: Радиус описанной окружности равнобокой трапеции");
+
+            double largerBaseA, smallerBaseB, sideC;
+
+            while (true)
+            {
+                Console.Write("Введите большее основание (a): ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out largerBaseA) && largerBaseA > 0)
+                    break;
+                Console.WriteLine("Ошибка: Большее основание (a) должно быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите меньшее основание (b): ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out smallerBaseB) && smallerBaseB > 0)
+                    break;
+                Console.WriteLine("Ошибка: Меньшее основание (b) должно быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите боковую сторону (c): ");
+                string inputC = Console.ReadLine();
+                if (double.TryParse(inputC, NumberStyles.Any, CultureInfo.InvariantCulture, out sideC) && sideC > 0)
+                    break;
+                Console.WriteLine("Ошибка: Боковая сторона (c) должна быть положительным числом.");
+            }
+
+            if (largerBaseA <= smallerBaseB)
+            {
+                Console.WriteLine("Ошибка: Большее основание (a) должно быть строго больше меньшего основания (b).");
+            }
+            else if (sideC * sideC < Math.Pow((largerBaseA - smallerBaseB) / 2.0, 2) - 1e-9)
+            {
+                 Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
+                     "Ошибка: Невозможно построить равнобокую трапецию с такими сторонами. Боковая сторона {0:F2} слишком коротка для оснований {1:F2} и {2:F2}.",
+                     sideC, largerBaseA, smallerBaseB));
+            }
+            else
+            {
+                double diagonalSquared = sideC * sideC + largerBaseA * smallerBaseB;
+                if (diagonalSquared < 0)
+                {
+                    Console.WriteLine("Ошибка: Невозможно вычислить диагональ (отрицательное подкоренное выражение).");
+                }
+                else
+                {
+                    double diagonal = Math.Sqrt(diagonalSquared);
+                    Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Вычисленная диагональ d = {0:F2}", diagonal));
+
+                    double areaTriangle = CalculateHeronArea(largerBaseA, sideC, diagonal);
+
+                    if (areaTriangle <= 1e-9)
+                    {
+                        Console.WriteLine("Ошибка: Невозможно построить треугольник из большего основания, боковой стороны и вычисленной диагонали (площадь близка к нулю). Это может указывать на вырожденный случай или некорректные исходные данные.");
+                    }
+                    else
+                    {
+                        double circumRadius = (largerBaseA * sideC * diagonal) / (4 * areaTriangle);
+                        Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Радиус описанной окружности R = {0:F2}", circumRadius));
+                    }
+                }
+            }
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```
+
+## Задание 20: Диагонали параллелограмма
+
+### `activity_main.xml`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_task20"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle_task20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 20: Диагонали параллелограмма"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextAngleAlpha_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Угол alpha (в градусах, между a и b)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate_task20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить диагонали"
+        app:layout_constraintTop_toBottomOf="@id/editTextAngleAlpha_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult_task20"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:\nДиагональ d1:\nДиагональ d2:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate_task20"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+// Math is part of java.lang, so no specific import needed for Math.sqrt, Math.cos, Math.toRadians
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSideA_task20;
+    private EditText editTextSideB_task20;
+    private EditText editTextAngleAlpha_task20;
+    private Button buttonCalculate_task20;
+    private TextView textViewResult_task20;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        editTextSideA_task20 = findViewById(R.id.editTextSideA_task20);
+        editTextSideB_task20 = findViewById(R.id.editTextSideB_task20);
+        editTextAngleAlpha_task20 = findViewById(R.id.editTextAngleAlpha_task20);
+        buttonCalculate_task20 = findViewById(R.id.buttonCalculate_task20);
+        textViewResult_task20 = findViewById(R.id.textViewResult_task20);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_task20), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        if (buttonCalculate_task20 != null) {
+            buttonCalculate_task20.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    calculateParallelogramDiagonals();
+                }
+            });
+        }
+    }
+
+    private void calculateParallelogramDiagonals() {
+        if (editTextSideA_task20 == null || editTextSideB_task20 == null || editTextAngleAlpha_task20 == null || textViewResult_task20 == null) {
+            if (textViewResult_task20 != null) {
+                textViewResult_task20.setText("Ошибка: Компоненты интерфейса не найдены.");
+            }
+            return;
+        }
+
+        String strSideA = editTextSideA_task20.getText().toString();
+        String strSideB = editTextSideB_task20.getText().toString();
+        String strAngleAlpha = editTextAngleAlpha_task20.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strAngleAlpha.isEmpty()) {
+            textViewResult_task20.setText("Результат: Пожалуйста, введите обе стороны и угол.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double alphaDegrees = Double.parseDouble(strAngleAlpha);
+
+            if (a <= 0 || b <= 0) {
+                textViewResult_task20.setText("Результат: Длины сторон должны быть положительными числами.");
+                return;
+            }
+            if (alphaDegrees <= 0 || alphaDegrees >= 180) {
+                textViewResult_task20.setText("Результат: Угол alpha должен быть больше 0 и меньше 180 градусов.");
+                return;
+            }
+
+            double alphaRadians = Math.toRadians(alphaDegrees);
+
+            double d1_squared = a*a + b*b - 2*a*b*Math.cos(alphaRadians);
+            double d2_squared = a*a + b*b + 2*a*b*Math.cos(alphaRadians);
+
+            if (d1_squared < 0) d1_squared = 0;
+            if (d2_squared < 0) d2_squared = 0;
+
+            double d1 = Math.sqrt(d1_squared);
+            double d2 = Math.sqrt(d2_squared);
+
+            textViewResult_task20.setText(String.format(Locale.getDefault(),
+                "Результат:\nДиагональ d1: %.2f\nДиагональ d2: %.2f", d1, d2));
+
+        } catch (NumberFormatException e) {
+            textViewResult_task20.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+### ConsoleApp.cs (C# Solution)
+```csharp
+using System;
+using System.Globalization;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Задание 20: Вычисление диагоналей параллелограмма");
+
+            double sideA, sideB, angleAlphaDegrees;
+
+            while (true)
+            {
+                Console.Write("Введите длину стороны a: ");
+                string inputA = Console.ReadLine();
+                if (double.TryParse(inputA, NumberStyles.Any, CultureInfo.InvariantCulture, out sideA) && sideA > 0)
+                    break;
+                Console.WriteLine("Ошибка: Длина стороны a должна быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите длину стороны b: ");
+                string inputB = Console.ReadLine();
+                if (double.TryParse(inputB, NumberStyles.Any, CultureInfo.InvariantCulture, out sideB) && sideB > 0)
+                    break;
+                Console.WriteLine("Ошибка: Длина стороны b должна быть положительным числом.");
+            }
+
+            while (true)
+            {
+                Console.Write("Введите угол alpha между сторонами a и b (в градусах): ");
+                string inputAngle = Console.ReadLine();
+                if (double.TryParse(inputAngle, NumberStyles.Any, CultureInfo.InvariantCulture, out angleAlphaDegrees) && angleAlphaDegrees > 0 && angleAlphaDegrees < 180)
+                    break;
+                Console.WriteLine("Ошибка: Угол alpha должен быть больше 0 и меньше 180 градусов.");
+            }
+
+            double angleAlphaRadians = Math.PI * angleAlphaDegrees / 180.0;
+
+            double d1_squared = sideA * sideA + sideB * sideB - 2 * sideA * sideB * Math.Cos(angleAlphaRadians);
+            double d2_squared = sideA * sideA + sideB * sideB + 2 * sideA * sideB * Math.Cos(angleAlphaRadians);
+
+            if (d1_squared < 0) d1_squared = 0;
+            if (d2_squared < 0) d2_squared = 0;
+
+            double d1 = Math.Sqrt(d1_squared);
+            double d2 = Math.Sqrt(d2_squared);
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Диагональ d1: {0:F2}", d1));
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "Диагональ d2: {0:F2}", d2));
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода...");
+            Console.ReadKey();
+        }
+    }
+}
+```

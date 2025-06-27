@@ -10,58 +10,71 @@
 
     <TextView
         android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Задание 18: Радиус вписанной окружности"
+        android:text="Задание 19: R описанной окружности (равноб. трапеция)"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:gravity="center_horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
     <EditText
-        android:id="@+id/editTextSideA_Task17"
+        android:id="@+id/editTextLargerBaseA"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Сторона a"
+        android:hint="Большее основание (a)"
         android:inputType="numberDecimal"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"
-        android:autofillHints="number" />
-
-    <EditText
-        android:id="@+id/editTextSideB_Task17"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Сторона b"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task17"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         android:autofillHints="number" />
 
     <EditText
-        android:id="@+id/editTextSideC_Task17"
+        android:id="@+id/editTextSmallerBaseB"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Сторона c"
+        android:hint="Меньшее основание (b)"
         android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task17"
+        app:layout_constraintTop_toBottomOf="@id/editTextLargerBaseA"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideC_Trapezoid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Боковая сторона (c)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSmallerBaseB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextDiagonalD"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Диагональ (d)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Trapezoid"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
         android:autofillHints="number" />
 
     <Button
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Вычислить радиус r"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Task17"
+        android:text="Вычислить радиус R"
+        app:layout_constraintTop_toBottomOf="@id/editTextDiagonalD"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>

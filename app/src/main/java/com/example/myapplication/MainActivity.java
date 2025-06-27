@@ -14,9 +14,10 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextSideA_Task17; // Переиспользуем ID из Задания 17
-    private EditText editTextSideB_Task17; // Переиспользуем ID из Задания 17
-    private EditText editTextSideC_Task17; // Переиспользуем ID из Задания 17
+    private EditText editTextLargerBaseA;
+    private EditText editTextSmallerBaseB;
+    private EditText editTextSideC_Trapezoid;
+    private EditText editTextDiagonalD;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -27,9 +28,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextSideA_Task17 = findViewById(R.id.editTextSideA_Task17);
-        editTextSideB_Task17 = findViewById(R.id.editTextSideB_Task17);
-        editTextSideC_Task17 = findViewById(R.id.editTextSideC_Task17);
+        editTextLargerBaseA = findViewById(R.id.editTextLargerBaseA);
+        editTextSmallerBaseB = findViewById(R.id.editTextSmallerBaseB);
+        editTextSideC_Trapezoid = findViewById(R.id.editTextSideC_Trapezoid);
+        editTextDiagonalD = findViewById(R.id.editTextDiagonalD);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,70 +44,67 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateIncircleRadius();
+                calculateTrapezoidCircumcircleRadius();
             }
         });
     }
 
-    private double calculateHeronArea(double sA, double sB, double sC) {
-        // Проверка неравенства треугольника
-        if (sA + sB <= sC || sA + sC <= sB || sB + sC <= sA) {
-            return -1; // Ошибка: стороны не образуют треугольник
+    // Вспомогательный метод для вычисления площади треугольника по формуле Герона
+    private double calculateHeronArea(double s1, double s2, double s3) {
+        if (s1 + s2 <= s3 || s1 + s3 <= s2 || s2 + s3 <= s1) {
+            return -1; // Невозможно образовать треугольник
         }
-        double p = (sA + sB + sC) / 2.0; // Полупериметр
-        double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
-        // Добавим небольшую погрешность для areaSquared, чтобы избежать -0.0 из-за ошибок округления
-        if (areaSquared < -1e-9) return -1;
-        if (areaSquared < 0) areaSquared = 0; // Если очень близко к нулю, но отрицательное
+        double p = (s1 + s2 + s3) / 2.0;
+        double areaSquared = p * (p - s1) * (p - s2) * (p - s3);
+        if (areaSquared < -1e-9) return -1; // Учет ошибок округления
+        if (areaSquared < 0) areaSquared = 0;
         return Math.sqrt(areaSquared);
     }
 
-    private void calculateIncircleRadius() {
-        String strSideA = editTextSideA_Task17.getText().toString();
-        String strSideB = editTextSideB_Task17.getText().toString();
-        String strSideC = editTextSideC_Task17.getText().toString();
+    private void calculateTrapezoidCircumcircleRadius() {
+        String strA = editTextLargerBaseA.getText().toString();
+        String strB = editTextSmallerBaseB.getText().toString(); // Меньшее основание b
+        String strC = editTextSideC_Trapezoid.getText().toString(); // Боковая сторона c
+        String strD = editTextDiagonalD.getText().toString(); // Диагональ d
 
-        if (strSideA.isEmpty() || strSideB.isEmpty() || strSideC.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
+        if (strA.isEmpty() || strB.isEmpty() || strC.isEmpty() || strD.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все четыре значения.");
             return;
         }
 
         try {
-            double a = Double.parseDouble(strSideA);
-            double b = Double.parseDouble(strSideB);
-            double c = Double.parseDouble(strSideC);
+            double a = Double.parseDouble(strA); // Большее основание
+            double b = Double.parseDouble(strB); // Меньшее основание
+            double c_side = Double.parseDouble(strC); // Боковая сторона
+            double d_diag = Double.parseDouble(strD); // Диагональ
 
-            if (a <= 0 || b <= 0 || c <= 0) {
-                textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
+            if (a <= 0 || b <= 0 || c_side <= 0 || d_diag <= 0) {
+                textViewResult.setText("Результат: Все длины должны быть положительными числами.");
+                return;
+            }
+            if (a <= b) {
+                 textViewResult.setText("Результат: Большее основание (a) должно быть больше меньшего (b).");
                 return;
             }
 
-            double area = calculateHeronArea(a, b, c);
+            // Для описанной окружности трапеция должна быть равнобокой.
+            // Мы используем треугольник со сторонами: большее основание (a), боковая сторона (c_side), диагональ (d_diag)
+            // Площадь этого треугольника S_acd
+            double areaTriangle = calculateHeronArea(a, c_side, d_diag);
 
-            if (area < 0) { // Ошибка от calculateHeronArea (не треугольник)
-                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник.");
-                return;
-            }
-            if (area == 0) { // Вырожденный треугольник
-                 textViewResult.setText("Результат: Площадь треугольника равна нулю (вырожденный треугольник), радиус вписанной окружности не определен / равен 0.");
-                return;
-            }
-
-
-            double semiPerimeter = (a + b + c) / 2.0;
-
-            if (semiPerimeter == 0) { // Теоретически не должно произойти, если area > 0
-                 textViewResult.setText("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+            if (areaTriangle <= 0) {
+                textViewResult.setText("Результат: Невозможно построить треугольник из большего основания (a), боковой стороны (c) и диагонали (d). Проверьте введенные значения.");
                 return;
             }
 
-            // r = S / p
-            double radius = area / semiPerimeter;
+            // Радиус описанной окружности R = (x*y*z) / (4*S_triangle)
+            // где x,y,z - стороны треугольника a, c_side, d_diag
+            double radius = (a * c_side * d_diag) / (4 * areaTriangle);
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус вписанной окружности r = %.2f", radius));
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус описанной окружности R = %.2f", radius));
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
         }
     }
 }

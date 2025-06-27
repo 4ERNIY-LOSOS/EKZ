@@ -14,9 +14,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextInt1;
-    private EditText editTextInt2;
-    // private EditText editTextInt3; // Удален, так как НОК для двух чисел
+    private EditText editTextIntegerInput;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -27,9 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextInt1 = findViewById(R.id.editTextInt1);
-        editTextInt2 = findViewById(R.id.editTextInt2);
-        // editTextInt3 = findViewById(R.id.editTextInt3); // Удален
+        editTextIntegerInput = findViewById(R.id.editTextIntegerInput);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,54 +38,42 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateLCMofTwoNumbers();
+                calculateSumOfDigits();
             }
         });
     }
 
-    // Метод для вычисления НОД двух чисел (алгоритм Евклида)
-    // Используется для вычисления НОК: НОК(a,b) = (|a*b|) / НОД(a,b)
-    private int gcd(int a, int b) {
-        a = Math.abs(a);
-        b = Math.abs(b);
-        while (b != 0) {
-            int temp = b;
-            b = a % b;
-            a = temp;
-        }
-        return a;
-    }
+    private void calculateSumOfDigits() {
+        String strInput = editTextIntegerInput.getText().toString();
 
-    private void calculateLCMofTwoNumbers() {
-        String strInt1 = editTextInt1.getText().toString();
-        String strInt2 = editTextInt2.getText().toString();
-
-        if (strInt1.isEmpty() || strInt2.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
+        if (strInput.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите число.");
             return;
         }
 
         try {
-            int num1 = Integer.parseInt(strInt1);
-            int num2 = Integer.parseInt(strInt2);
+            long number = Long.parseLong(strInput); // Используем long для поддержки более широкого диапазона чисел
+            long originalNumber = number; // Сохраняем исходное число для вывода
 
-            if (num1 == 0 || num2 == 0) {
-                // НОК(a, 0) = 0 и НОК(0, b) = 0
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = 0", num1, num2));
-                return;
+            number = Math.abs(number); // Работаем с модулем числа
+
+            if (originalNumber == 0) {
+                 textViewResult.setText(String.format(Locale.getDefault(), "Результат: Сумма цифр числа %d = 0", originalNumber));
+                 return;
             }
 
-            // НОК(a,b) = (|a*b|) / НОД(a,b)
-            // Важно использовать long для произведения, чтобы избежать переполнения перед делением
-            long product = (long) Math.abs(num1) * Math.abs(num2);
-            int commonDivisor = gcd(num1, num2);
+            long sum = 0;
+            long tempNumber = number; // Используем временную переменную для цикла
 
-            long lcmResult = product / commonDivisor;
+            while (tempNumber > 0) {
+                sum += tempNumber % 10; // Добавляем последнюю цифру к сумме
+                tempNumber /= 10;      // Удаляем последнюю цифру
+            }
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = %d", num1, num2, lcmResult));
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Сумма цифр числа %d = %d", originalNumber, sum));
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число.");
         }
     }
 }

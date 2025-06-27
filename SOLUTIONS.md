@@ -2319,3 +2319,194 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
+## Задание 14: Последовательный поиск
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 14: Последовательный поиск"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextArrayInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Массив чисел (напр., 5,1,8,2,9)"
+        android:inputType="text"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="numbers" />
+
+    <EditText
+        android:id="@+id/editTextSearchElement"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Искомый элемент"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrayInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Найти (послед.)"
+        app:layout_constraintTop_toBottomOf="@id/editTextSearchElement"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextArrayInput;
+    private EditText editTextSearchElement;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextArrayInput = findViewById(R.id.editTextArrayInput);
+        editTextSearchElement = findViewById(R.id.editTextSearchElement);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performLinearSearch();
+            }
+        });
+    }
+
+    private void performLinearSearch() {
+        String arrayText = editTextArrayInput.getText().toString();
+        String elementText = editTextSearchElement.getText().toString();
+
+        if (arrayText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для массива пустое. Введите массив.");
+            return;
+        }
+        if (elementText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для искомого элемента пустое. Введите элемент.");
+            return;
+        }
+
+        String[] stringArray = arrayText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+            textViewResult.setText("Результат: Введите числа для массива.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в массиве: '%s'. Введите корректные целые числа.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Массив не содержит чисел.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+        int searchElement;
+        try {
+            searchElement = Integer.parseInt(elementText.trim());
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Искомый элемент введен некорректно.");
+            return;
+        }
+
+        // Алгоритм последовательного поиска
+        int index = -1;
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == searchElement) {
+                index = i; // Найдено первое вхождение
+                break;
+            }
+        }
+
+        if (index != -1) {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d найден на позиции %d (индекс).", searchElement, index));
+        } else {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d не найден в массиве.", searchElement));
+        }
+    }
+}
+```

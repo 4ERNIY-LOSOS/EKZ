@@ -18,7 +18,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextSortedArrayInput;
+    private EditText editTextArrayInput; // Переименовано с editTextSortedArrayInput
     private EditText editTextSearchElement;
     private Button buttonCalculate;
     private TextView textViewResult;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextSortedArrayInput = findViewById(R.id.editTextSortedArrayInput);
+        editTextArrayInput = findViewById(R.id.editTextArrayInput); // Используем новый ID
         editTextSearchElement = findViewById(R.id.editTextSearchElement);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
@@ -44,17 +44,17 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performBinarySearch();
+                performLinearSearch();
             }
         });
     }
 
-    private void performBinarySearch() {
-        String arrayText = editTextSortedArrayInput.getText().toString();
+    private void performLinearSearch() {
+        String arrayText = editTextArrayInput.getText().toString();
         String elementText = editTextSearchElement.getText().toString();
 
         if (arrayText.isEmpty()) {
-            textViewResult.setText("Результат: Поле для массива пустое. Введите отсортированный массив.");
+            textViewResult.setText("Результат: Поле для массива пустое. Введите массив.");
             return;
         }
         if (elementText.isEmpty()) {
@@ -93,32 +93,12 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Проверка на отсортированность (опционально, но хорошо бы иметь)
-        for (int i = 0; i < numbers.length - 1; i++) {
-            if (numbers[i] > numbers[i+1]) {
-                textViewResult.setText("Результат: Массив не отсортирован! Бинарный поиск требует отсортированного массива.\nПожалуйста, отсортируйте: " + Arrays.toString(numbers));
-                // Можно добавить вызов сортировки, если есть
-                // Arrays.sort(numbers); // или вызвать performBubbleSort если он был бы здесь
-                // textViewResult.append("\nОтсортированный массив для поиска: " + Arrays.toString(numbers));
-                return;
-            }
-        }
-
-
-        // Алгоритм бинарного поиска
-        int low = 0;
-        int high = numbers.length - 1;
+        // Алгоритм последовательного поиска
         int index = -1;
-
-        while (low <= high) {
-            int mid = low + (high - low) / 2; // Чтобы избежать переполнения (low + high) / 2
-            if (numbers[mid] == searchElement) {
-                index = mid;
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] == searchElement) {
+                index = i; // Найдено первое вхождение
                 break;
-            } else if (numbers[mid] < searchElement) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
             }
         }
 

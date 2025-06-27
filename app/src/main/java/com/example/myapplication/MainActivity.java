@@ -12,11 +12,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText editTextRadius;
-    private EditText editTextHeightCylinder;
-    private Button buttonCalculate;
+    private EditText editTextNumber1;
+    private EditText editTextNumber2;
+    private Button buttonAdd;
+    private Button buttonSubtract;
+    private Button buttonMultiply;
+    private Button buttonDivide;
     private TextView textViewResult;
 
     @Override
@@ -26,9 +29,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextRadius = findViewById(R.id.editTextRadius);
-        editTextHeightCylinder = findViewById(R.id.editTextHeightCylinder);
-        buttonCalculate = findViewById(R.id.buttonCalculate);
+        editTextNumber1 = findViewById(R.id.editTextNumber1);
+        editTextNumber2 = findViewById(R.id.editTextNumber2);
+        buttonAdd = findViewById(R.id.buttonAdd);
+        buttonSubtract = findViewById(R.id.buttonSubtract);
+        buttonMultiply = findViewById(R.id.buttonMultiply);
+        buttonDivide = findViewById(R.id.buttonDivide);
         textViewResult = findViewById(R.id.textViewResult);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -37,37 +43,55 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        buttonCalculate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calculateCylinderVolume();
-            }
-        });
+        // Установка слушателей
+        buttonAdd.setOnClickListener(this);
+        buttonSubtract.setOnClickListener(this);
+        buttonMultiply.setOnClickListener(this);
+        buttonDivide.setOnClickListener(this);
     }
 
-    private void calculateCylinderVolume() {
-        String strRadius = editTextRadius.getText().toString();
-        String strHeight = editTextHeightCylinder.getText().toString();
+    @Override
+    public void onClick(View v) {
+        String strNum1 = editTextNumber1.getText().toString();
+        String strNum2 = editTextNumber2.getText().toString();
 
-        if (strRadius.isEmpty() || strHeight.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите радиус и высоту.");
+        if (strNum1.isEmpty() || strNum2.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
             return;
         }
 
         try {
-            double radius = Double.parseDouble(strRadius);
-            double height = Double.parseDouble(strHeight);
+            double num1 = Double.parseDouble(strNum1);
+            double num2 = Double.parseDouble(strNum2);
+            double result = 0;
+            String operationSymbol = "";
 
-            if (radius <= 0 || height <= 0) {
-                textViewResult.setText("Результат: Радиус и высота должны быть положительными числами.");
-                return;
+            int viewId = v.getId();
+            if (viewId == R.id.buttonAdd) {
+                result = num1 + num2;
+                operationSymbol = "+";
+            } else if (viewId == R.id.buttonSubtract) {
+                result = num1 - num2;
+                operationSymbol = "-";
+            } else if (viewId == R.id.buttonMultiply) {
+                result = num1 * num2;
+                operationSymbol = "*";
+            } else if (viewId == R.id.buttonDivide) {
+                if (num2 == 0) {
+                    textViewResult.setText("Результат: Деление на ноль невозможно.");
+                    return;
+                }
+                result = num1 / num2;
+                operationSymbol = "/";
             }
 
-            // Вычисление объема цилиндра
-            // V = π * r^2 * h
-            double volume = Math.PI * radius * radius * height;
-
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Объем цилиндра = %.2f", volume));
+            if (!operationSymbol.isEmpty()) {
+                 if (result == (long) result) { // Если результат - целое число
+                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: %d %s %d = %d", (long)num1, operationSymbol, (long)num2, (long)result));
+                } else { // Если результат - дробное число
+                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: %.2f %s %.2f = %.2f", num1, operationSymbol, num2, result));
+                }
+            }
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");

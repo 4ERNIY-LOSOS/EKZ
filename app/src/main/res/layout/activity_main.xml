@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Задание 3: Площадь трапеции"
+        android:text="Задание 4: Объем цилиндра"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,10 +21,10 @@
         android:layout_marginTop="16dp"/>
 
     <EditText
-        android:id="@+id/editTextBaseA"
+        android:id="@+id/editTextRadius"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Основание a"
+        android:hint="Радиус основания (r)"
         android:inputType="numberDecimal"
         app:layout_constraintTop_toBottomOf="@id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,24 +33,12 @@
         android:autofillHints="number" />
 
     <EditText
-        android:id="@+id/editTextBaseB"
+        android:id="@+id/editTextHeightCylinder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Основание b"
+        android:hint="Высота цилиндра (h)"
         android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextBaseA"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:autofillHints="number" />
-
-    <EditText
-        android:id="@+id/editTextHeight"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Высота h"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextBaseB"
+        app:layout_constraintTop_toBottomOf="@id/editTextRadius"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
@@ -60,8 +48,8 @@
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Вычислить площадь"
-        app:layout_constraintTop_toBottomOf="@id/editTextHeight"
+        android:text="Вычислить объем"
+        app:layout_constraintTop_toBottomOf="@id/editTextHeightCylinder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>

@@ -4,7 +4,7 @@
 
 ## Задание 1: Площадь треугольника по формуле Герона
 
-### `app/src/main/res/layout/activity_main.xml`
+### `activity_main.xml`
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -89,7 +89,7 @@
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
-### `app/src/main/java/com/example/myapplication/MainActivity.java`
+### `MainActivity.java`
 
 ```java
 package com.example.myapplication;
@@ -539,6 +539,162 @@ public class MainActivity extends AppCompatActivity {
             double area = ((baseA + baseB) / 2) * height;
 
             textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь трапеции = %.2f", area));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```
+
+## Задание 4: Объем цилиндра
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 4: Объем цилиндра"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextRadius"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Радиус основания (r)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextHeightCylinder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Высота цилиндра (h)"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextRadius"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить объем"
+        app:layout_constraintTop_toBottomOf="@id/editTextHeightCylinder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextRadius;
+    private EditText editTextHeightCylinder;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextRadius = findViewById(R.id.editTextRadius);
+        editTextHeightCylinder = findViewById(R.id.editTextHeightCylinder);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateCylinderVolume();
+            }
+        });
+    }
+
+    private void calculateCylinderVolume() {
+        String strRadius = editTextRadius.getText().toString();
+        String strHeight = editTextHeightCylinder.getText().toString();
+
+        if (strRadius.isEmpty() || strHeight.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите радиус и высоту.");
+            return;
+        }
+
+        try {
+            double radius = Double.parseDouble(strRadius);
+            double height = Double.parseDouble(strHeight);
+
+            if (radius <= 0 || height <= 0) {
+                textViewResult.setText("Результат: Радиус и высота должны быть положительными числами.");
+                return;
+            }
+
+            // Вычисление объема цилиндра
+            // V = π * r^2 * h
+            double volume = Math.PI * radius * radius * height;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Объем цилиндра = %.2f", volume));
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");

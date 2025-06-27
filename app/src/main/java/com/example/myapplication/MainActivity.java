@@ -14,9 +14,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextBaseA;
-    private EditText editTextBaseB;
-    private EditText editTextHeight;
+    private EditText editTextRadius;
+    private EditText editTextHeightCylinder;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -27,9 +26,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextBaseA = findViewById(R.id.editTextBaseA);
-        editTextBaseB = findViewById(R.id.editTextBaseB);
-        editTextHeight = findViewById(R.id.editTextHeight);
+        editTextRadius = findViewById(R.id.editTextRadius);
+        editTextHeightCylinder = findViewById(R.id.editTextHeightCylinder);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,35 +40,34 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateTrapezoidArea();
+                calculateCylinderVolume();
             }
         });
     }
 
-    private void calculateTrapezoidArea() {
-        String strBaseA = editTextBaseA.getText().toString();
-        String strBaseB = editTextBaseB.getText().toString();
-        String strHeight = editTextHeight.getText().toString();
+    private void calculateCylinderVolume() {
+        String strRadius = editTextRadius.getText().toString();
+        String strHeight = editTextHeightCylinder.getText().toString();
 
-        if (strBaseA.isEmpty() || strBaseB.isEmpty() || strHeight.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите оба основания и высоту.");
+        if (strRadius.isEmpty() || strHeight.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите радиус и высоту.");
             return;
         }
 
         try {
-            double baseA = Double.parseDouble(strBaseA);
-            double baseB = Double.parseDouble(strBaseB);
+            double radius = Double.parseDouble(strRadius);
             double height = Double.parseDouble(strHeight);
 
-            if (baseA <= 0 || baseB <= 0 || height <= 0) {
-                textViewResult.setText("Результат: Основания и высота должны быть положительными числами.");
+            if (radius <= 0 || height <= 0) {
+                textViewResult.setText("Результат: Радиус и высота должны быть положительными числами.");
                 return;
             }
 
-            // Вычисление площади трапеции
-            double area = ((baseA + baseB) / 2) * height;
+            // Вычисление объема цилиндра
+            // V = π * r^2 * h
+            double volume = Math.PI * radius * radius * height;
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь трапеции = %.2f", area));
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Объем цилиндра = %.2f", volume));
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");

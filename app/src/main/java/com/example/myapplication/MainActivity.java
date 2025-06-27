@@ -13,11 +13,13 @@ import android.widget.TextView;
 import java.util.Locale;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextFibonacciCount;
+    private EditText editTextSortedArrayInput;
+    private EditText editTextSearchElement;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -28,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextFibonacciCount = findViewById(R.id.editTextFibonacciCount);
+        editTextSortedArrayInput = findViewById(R.id.editTextSortedArrayInput);
+        editTextSearchElement = findViewById(R.id.editTextSearchElement);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -41,62 +44,88 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                generateFibonacciSequence();
+                performBinarySearch();
             }
         });
     }
 
-    private void generateFibonacciSequence() {
-        String strN = editTextFibonacciCount.getText().toString();
+    private void performBinarySearch() {
+        String arrayText = editTextSortedArrayInput.getText().toString();
+        String elementText = editTextSearchElement.getText().toString();
 
-        if (strN.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите количество чисел.");
+        if (arrayText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для массива пустое. Введите отсортированный массив.");
+            return;
+        }
+        if (elementText.isEmpty()) {
+            textViewResult.setText("Результат: Поле для искомого элемента пустое. Введите элемент.");
             return;
         }
 
+        String[] stringArray = arrayText.split("[,\\s]+");
+        if (stringArray.length == 0 || (stringArray.length == 1 && stringArray[0].isEmpty())) {
+            textViewResult.setText("Результат: Введите числа для массива.");
+            return;
+        }
+
+        List<Integer> numbersList = new ArrayList<>();
+        for (String s : stringArray) {
+            if (s.trim().isEmpty()) continue;
+            try {
+                numbersList.add(Integer.parseInt(s.trim()));
+            } catch (NumberFormatException e) {
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Ошибка в массиве: '%s'. Введите корректные целые числа.", s));
+                return;
+            }
+        }
+
+        if (numbersList.isEmpty()) {
+            textViewResult.setText("Результат: Массив не содержит чисел.");
+            return;
+        }
+
+        Integer[] numbers = numbersList.toArray(new Integer[0]);
+        int searchElement;
         try {
-            int n = Integer.parseInt(strN);
-
-            if (n < 0) {
-                textViewResult.setText("Результат: Количество чисел не может быть отрицательным.");
-                return;
-            }
-            if (n == 0) {
-                textViewResult.setText("Результат: Последовательность пуста (0 чисел).");
-                return;
-            }
-            // Ограничение, чтобы избежать слишком больших чисел и долгого вывода
-            // Число Фибоначчи F(93) уже превышает Long.MAX_VALUE
-            if (n > 92) {
-                textViewResult.setText("Результат: Слишком большое N. Пожалуйста, введите N <= 92, чтобы избежать переполнения long.");
-                return;
-            }
-
-
-            List<Long> fibonacciSequence = new ArrayList<>();
-            if (n >= 1) {
-                fibonacciSequence.add(0L);
-            }
-            if (n >= 2) {
-                fibonacciSequence.add(1L);
-            }
-
-            for (int i = 2; i < n; i++) {
-                long nextFib = fibonacciSequence.get(i - 1) + fibonacciSequence.get(i - 2);
-                fibonacciSequence.add(nextFib);
-            }
-
-            StringBuilder sb = new StringBuilder("Результат: ");
-            for (int i = 0; i < fibonacciSequence.size(); i++) {
-                sb.append(fibonacciSequence.get(i));
-                if (i < fibonacciSequence.size() - 1) {
-                    sb.append(", ");
-                }
-            }
-            textViewResult.setText(sb.toString());
-
+            searchElement = Integer.parseInt(elementText.trim());
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректное целое число для N.");
+            textViewResult.setText("Результат: Искомый элемент введен некорректно.");
+            return;
+        }
+
+        // Проверка на отсортированность (опционально, но хорошо бы иметь)
+        for (int i = 0; i < numbers.length - 1; i++) {
+            if (numbers[i] > numbers[i+1]) {
+                textViewResult.setText("Результат: Массив не отсортирован! Бинарный поиск требует отсортированного массива.\nПожалуйста, отсортируйте: " + Arrays.toString(numbers));
+                // Можно добавить вызов сортировки, если есть
+                // Arrays.sort(numbers); // или вызвать performBubbleSort если он был бы здесь
+                // textViewResult.append("\nОтсортированный массив для поиска: " + Arrays.toString(numbers));
+                return;
+            }
+        }
+
+
+        // Алгоритм бинарного поиска
+        int low = 0;
+        int high = numbers.length - 1;
+        int index = -1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2; // Чтобы избежать переполнения (low + high) / 2
+            if (numbers[mid] == searchElement) {
+                index = mid;
+                break;
+            } else if (numbers[mid] < searchElement) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        if (index != -1) {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d найден на позиции %d (индекс).", searchElement, index));
+        } else {
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Элемент %d не найден в массиве.", searchElement));
         }
     }
 }

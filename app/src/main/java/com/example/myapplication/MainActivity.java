@@ -14,9 +14,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextSideA_Task17;
-    private EditText editTextSideB_Task17;
-    private EditText editTextSideC_Task17;
+    private EditText editTextSideA_Task17; // Переиспользуем ID из Задания 17
+    private EditText editTextSideB_Task17; // Переиспользуем ID из Задания 17
+    private EditText editTextSideC_Task17; // Переиспользуем ID из Задания 17
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateCircumcircleRadius();
+                calculateIncircleRadius();
             }
         });
     }
@@ -54,11 +54,13 @@ public class MainActivity extends AppCompatActivity {
         }
         double p = (sA + sB + sC) / 2.0; // Полупериметр
         double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
-        if (areaSquared < 0) return -1; // Может произойти из-за ошибок округления, если стороны близки к вырожденному случаю
+        // Добавим небольшую погрешность для areaSquared, чтобы избежать -0.0 из-за ошибок округления
+        if (areaSquared < -1e-9) return -1;
+        if (areaSquared < 0) areaSquared = 0; // Если очень близко к нулю, но отрицательное
         return Math.sqrt(areaSquared);
     }
 
-    private void calculateCircumcircleRadius() {
+    private void calculateIncircleRadius() {
         String strSideA = editTextSideA_Task17.getText().toString();
         String strSideB = editTextSideB_Task17.getText().toString();
         String strSideC = editTextSideC_Task17.getText().toString();
@@ -80,15 +82,27 @@ public class MainActivity extends AppCompatActivity {
 
             double area = calculateHeronArea(a, b, c);
 
-            if (area <= 0) { // <=0 включает -1 от heronArea и возможный 0 для вырожденного треугольника
-                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник или площадь равна нулю.");
+            if (area < 0) { // Ошибка от calculateHeronArea (не треугольник)
+                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник.");
+                return;
+            }
+            if (area == 0) { // Вырожденный треугольник
+                 textViewResult.setText("Результат: Площадь треугольника равна нулю (вырожденный треугольник), радиус вписанной окружности не определен / равен 0.");
                 return;
             }
 
-            // R = (a * b * c) / (4 * S)
-            double radius = (a * b * c) / (4 * area);
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус описанной окружности R = %.2f", radius));
+            double semiPerimeter = (a + b + c) / 2.0;
+
+            if (semiPerimeter == 0) { // Теоретически не должно произойти, если area > 0
+                 textViewResult.setText("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+                return;
+            }
+
+            // r = S / p
+            double radius = area / semiPerimeter;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус вписанной окружности r = %.2f", radius));
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");

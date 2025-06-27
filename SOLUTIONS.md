@@ -2989,7 +2989,7 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateCircumcircleRadius();
+                calculateIncircleRadius();
             }
         });
     }
@@ -3001,11 +3001,13 @@ public class MainActivity extends AppCompatActivity {
         }
         double p = (sA + sB + sC) / 2.0; // Полупериметр
         double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
-        if (areaSquared < 0) return -1; // Может произойти из-за ошибок округления, если стороны близки к вырожденному случаю
+        // Добавим небольшую погрешность для areaSquared, чтобы избежать -0.0 из-за ошибок округления
+        if (areaSquared < -1e-9) return -1;
+        if (areaSquared < 0) areaSquared = 0; // Если очень близко к нулю, но отрицательное
         return Math.sqrt(areaSquared);
     }
 
-    private void calculateCircumcircleRadius() {
+    private void calculateIncircleRadius() {
         String strSideA = editTextSideA_Task17.getText().toString();
         String strSideB = editTextSideB_Task17.getText().toString();
         String strSideC = editTextSideC_Task17.getText().toString();
@@ -3027,15 +3029,230 @@ public class MainActivity extends AppCompatActivity {
 
             double area = calculateHeronArea(a, b, c);
 
-            if (area <= 0) { // <=0 включает -1 от heronArea и возможный 0 для вырожденного треугольника
-                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник или площадь равна нулю.");
+            if (area < 0) { // Ошибка от calculateHeronArea (не треугольник)
+                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник.");
+                return;
+            }
+            if (area == 0) { // Вырожденный треугольник
+                 textViewResult.setText("Результат: Площадь треугольника равна нулю (вырожденный треугольник), радиус вписанной окружности не определен / равен 0.");
                 return;
             }
 
-            // R = (a * b * c) / (4 * S)
-            double radius = (a * b * c) / (4 * area);
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус описанной окружности R = %.2f", radius));
+            double semiPerimeter = (a + b + c) / 2.0;
+
+            if (semiPerimeter == 0) { // Теоретически не должно произойти, если area > 0
+                 textViewResult.setText("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+                return;
+            }
+
+            // r = S / p
+            double radius = area / semiPerimeter;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус вписанной окружности r = %.2f", radius));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
+        }
+    }
+}
+```
+
+## Задание 18: Радиус вписанной окружности
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 18: Радиус вписанной окружности"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextSideA_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideB_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextSideC_Task17"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Сторона c"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить радиус r"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Task17"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextSideA_Task17;
+    private EditText editTextSideB_Task17;
+    private EditText editTextSideC_Task17;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextSideA_Task17 = findViewById(R.id.editTextSideA_Task17);
+        editTextSideB_Task17 = findViewById(R.id.editTextSideB_Task17);
+        editTextSideC_Task17 = findViewById(R.id.editTextSideC_Task17);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateIncircleRadius();
+            }
+        });
+    }
+
+    private double calculateHeronArea(double sA, double sB, double sC) {
+        // Проверка неравенства треугольника
+        if (sA + sB <= sC || sA + sC <= sB || sB + sC <= sA) {
+            return -1; // Ошибка: стороны не образуют треугольник
+        }
+        double p = (sA + sB + sC) / 2.0; // Полупериметр
+        double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
+        // Добавим небольшую погрешность для areaSquared, чтобы избежать -0.0 из-за ошибок округления
+        if (areaSquared < -1e-9) return -1;
+        if (areaSquared < 0) areaSquared = 0; // Если очень близко к нулю, но отрицательное
+        return Math.sqrt(areaSquared);
+    }
+
+    private void calculateIncircleRadius() {
+        String strSideA = editTextSideA_Task17.getText().toString();
+        String strSideB = editTextSideB_Task17.getText().toString();
+        String strSideC = editTextSideC_Task17.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strSideC.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
+            return;
+        }
+
+        try {
+            double a = Double.parseDouble(strSideA);
+            double b = Double.parseDouble(strSideB);
+            double c = Double.parseDouble(strSideC);
+
+            if (a <= 0 || b <= 0 || c <= 0) {
+                textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
+                return;
+            }
+
+            double area = calculateHeronArea(a, b, c);
+
+            if (area < 0) { // Ошибка от calculateHeronArea (не треугольник)
+                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник.");
+                return;
+            }
+            if (area == 0) { // Вырожденный треугольник
+                 textViewResult.setText("Результат: Площадь треугольника равна нулю (вырожденный треугольник), радиус вписанной окружности не определен / равен 0.");
+                return;
+            }
+
+
+            double semiPerimeter = (a + b + c) / 2.0;
+
+            if (semiPerimeter == 0) { // Теоретически не должно произойти, если area > 0
+                 textViewResult.setText("Результат: Полупериметр равен нулю, невозможно вычислить радиус.");
+                return;
+            }
+
+            // r = S / p
+            double radius = area / semiPerimeter;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус вписанной окружности r = %.2f", radius));
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");

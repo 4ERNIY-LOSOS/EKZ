@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editTextInt1;
     private EditText editTextInt2;
-    private EditText editTextInt3;
+    // private EditText editTextInt3; // Удален, так как НОК для двух чисел
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         // Инициализация UI элементов
         editTextInt1 = findViewById(R.id.editTextInt1);
         editTextInt2 = findViewById(R.id.editTextInt2);
-        editTextInt3 = findViewById(R.id.editTextInt3);
+        // editTextInt3 = findViewById(R.id.editTextInt3); // Удален
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,12 +42,13 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateGCDofThreeNumbers();
+                calculateLCMofTwoNumbers();
             }
         });
     }
 
     // Метод для вычисления НОД двух чисел (алгоритм Евклида)
+    // Используется для вычисления НОК: НОК(a,b) = (|a*b|) / НОД(a,b)
     private int gcd(int a, int b) {
         a = Math.abs(a);
         b = Math.abs(b);
@@ -59,41 +60,33 @@ public class MainActivity extends AppCompatActivity {
         return a;
     }
 
-    private void calculateGCDofThreeNumbers() {
+    private void calculateLCMofTwoNumbers() {
         String strInt1 = editTextInt1.getText().toString();
         String strInt2 = editTextInt2.getText().toString();
-        String strInt3 = editTextInt3.getText().toString();
 
-        if (strInt1.isEmpty() || strInt2.isEmpty() || strInt3.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите все три числа.");
+        if (strInt1.isEmpty() || strInt2.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
             return;
         }
 
         try {
             int num1 = Integer.parseInt(strInt1);
             int num2 = Integer.parseInt(strInt2);
-            int num3 = Integer.parseInt(strInt3);
 
-            if (num1 == 0 && num2 == 0 && num3 == 0) {
-                textViewResult.setText("Результат: НОД(0,0,0) не определен (или 0 по соглашению). Введите хотя бы одно ненулевое число.");
+            if (num1 == 0 || num2 == 0) {
+                // НОК(a, 0) = 0 и НОК(0, b) = 0
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = 0", num1, num2));
                 return;
             }
 
-            // НОД(a, b, c) = НОД(НОД(a, b), c)
-            // Также НОД(0, x) = |x|
-            int resultGcd;
-            if (num1 == 0 && num2 == 0) {
-                resultGcd = Math.abs(num3);
-            } else if (num1 == 0 && num3 == 0) {
-                resultGcd = Math.abs(num2);
-            } else if (num2 == 0 && num3 == 0) {
-                resultGcd = Math.abs(num1);
-            } else {
-                 resultGcd = gcd(gcd(num1, num2), num3);
-            }
+            // НОК(a,b) = (|a*b|) / НОД(a,b)
+            // Важно использовать long для произведения, чтобы избежать переполнения перед делением
+            long product = (long) Math.abs(num1) * Math.abs(num2);
+            int commonDivisor = gcd(num1, num2);
 
+            long lcmResult = product / commonDivisor;
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОД(%d, %d, %d) = %d", num1, num2, num3, resultGcd));
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = %d", num1, num2, lcmResult));
 
         } catch (NumberFormatException e) {
             textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");

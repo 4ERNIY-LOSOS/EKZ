@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Задание 6: НОД трех чисел"
+        android:text="Задание 7: НОК двух чисел"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,24 +44,12 @@
         android:layout_marginTop="16dp"
         android:autofillHints="number" />
 
-    <EditText
-        android:id="@+id/editTextInt3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Число 3"
-        android:inputType="numberSigned"
-        app:layout_constraintTop_toBottomOf="@id/editTextInt2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:autofillHints="number" />
-
     <Button
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Вычислить НОД"
-        app:layout_constraintTop_toBottomOf="@id/editTextInt3"
+        android:text="Вычислить НОК"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>

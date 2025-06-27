@@ -1112,3 +1112,178 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
+## Задание 7: НОК двух чисел
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 7: НОК двух чисел"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextInt1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 1"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextInt2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Число 2"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить НОК"
+        app:layout_constraintTop_toBottomOf="@id/editTextInt2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextInt1;
+    private EditText editTextInt2;
+    // private EditText editTextInt3; // Удален, так как НОК для двух чисел
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextInt1 = findViewById(R.id.editTextInt1);
+        editTextInt2 = findViewById(R.id.editTextInt2);
+        // editTextInt3 = findViewById(R.id.editTextInt3); // Удален
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateLCMofTwoNumbers();
+            }
+        });
+    }
+
+    // Метод для вычисления НОД двух чисел (алгоритм Евклида)
+    // Используется для вычисления НОК: НОК(a,b) = (|a*b|) / НОД(a,b)
+    private int gcd(int a, int b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    private void calculateLCMofTwoNumbers() {
+        String strInt1 = editTextInt1.getText().toString();
+        String strInt2 = editTextInt2.getText().toString();
+
+        if (strInt1.isEmpty() || strInt2.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба числа.");
+            return;
+        }
+
+        try {
+            int num1 = Integer.parseInt(strInt1);
+            int num2 = Integer.parseInt(strInt2);
+
+            if (num1 == 0 || num2 == 0) {
+                // НОК(a, 0) = 0 и НОК(0, b) = 0
+                textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = 0", num1, num2));
+                return;
+            }
+
+            // НОК(a,b) = (|a*b|) / НОД(a,b)
+            // Важно использовать long для произведения, чтобы избежать переполнения перед делением
+            long product = (long) Math.abs(num1) * Math.abs(num2);
+            int commonDivisor = gcd(num1, num2);
+
+            long lcmResult = product / commonDivisor;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: НОК(%d, %d) = %d", num1, num2, lcmResult));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные целые числа.");
+        }
+    }
+}
+```

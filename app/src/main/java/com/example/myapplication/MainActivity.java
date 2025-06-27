@@ -14,9 +14,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextCoefficientA;
-    private EditText editTextCoefficientB;
-    private EditText editTextCoefficientC;
+    private EditText editTextBaseA;
+    private EditText editTextBaseB;
+    private EditText editTextHeight;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextCoefficientA = findViewById(R.id.editTextCoefficientA);
-        editTextCoefficientB = findViewById(R.id.editTextCoefficientB);
-        editTextCoefficientC = findViewById(R.id.editTextCoefficientC);
+        editTextBaseA = findViewById(R.id.editTextBaseA);
+        editTextBaseB = findViewById(R.id.editTextBaseB);
+        editTextHeight = findViewById(R.id.editTextHeight);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,57 +42,38 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateQuadraticEquationRoots();
+                calculateTrapezoidArea();
             }
         });
     }
 
-    private void calculateQuadraticEquationRoots() {
-        String strA = editTextCoefficientA.getText().toString();
-        String strB = editTextCoefficientB.getText().toString();
-        String strC = editTextCoefficientC.getText().toString();
+    private void calculateTrapezoidArea() {
+        String strBaseA = editTextBaseA.getText().toString();
+        String strBaseB = editTextBaseB.getText().toString();
+        String strHeight = editTextHeight.getText().toString();
 
-        if (strA.isEmpty() || strB.isEmpty() || strC.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите все три коэффициента.");
+        if (strBaseA.isEmpty() || strBaseB.isEmpty() || strHeight.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба основания и высоту.");
             return;
         }
 
         try {
-            double a = Double.parseDouble(strA);
-            double b = Double.parseDouble(strB);
-            double c = Double.parseDouble(strC);
+            double baseA = Double.parseDouble(strBaseA);
+            double baseB = Double.parseDouble(strBaseB);
+            double height = Double.parseDouble(strHeight);
 
-            if (a == 0) {
-                // Это линейное уравнение bx + c = 0
-                if (b == 0) {
-                    if (c == 0) {
-                        textViewResult.setText("Результат: Бесконечное множество решений (0 = 0).");
-                    } else {
-                        textViewResult.setText("Результат: Решений нет (c = 0, где c != 0).");
-                    }
-                } else {
-                    double x = -c / b;
-                    textViewResult.setText(String.format(Locale.getDefault(), "Результат: Линейное уравнение. Корень x = %.2f", x));
-                }
+            if (baseA <= 0 || baseB <= 0 || height <= 0) {
+                textViewResult.setText("Результат: Основания и высота должны быть положительными числами.");
                 return;
             }
 
-            // Вычисление дискриминанта
-            double discriminant = b * b - 4 * a * c;
+            // Вычисление площади трапеции
+            double area = ((baseA + baseB) / 2) * height;
 
-            if (discriminant > 0) {
-                double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-                double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Два корня: x1 = %.2f, x2 = %.2f", x1, x2));
-            } else if (discriminant == 0) {
-                double x = -b / (2 * a);
-                textViewResult.setText(String.format(Locale.getDefault(), "Результат: Один корень: x = %.2f", x));
-            } else {
-                textViewResult.setText("Результат: Действительных корней нет (дискриминант < 0).");
-            }
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь трапеции = %.2f", area));
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для коэффициентов.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
         }
     }
 }

@@ -375,3 +375,174 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
+## Задание 3: Площадь трапеции
+
+### `activity_main.xml`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Задание 3: Площадь трапеции"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextBaseA"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Основание a"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextBaseB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Основание b"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextBaseA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <EditText
+        android:id="@+id/editTextHeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Высота h"
+        android:inputType="numberDecimal"
+        app:layout_constraintTop_toBottomOf="@id/editTextBaseB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:autofillHints="number" />
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вычислить площадь"
+        app:layout_constraintTop_toBottomOf="@id/editTextHeight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат:"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/buttonCalculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+### `MainActivity.java`
+
+```java
+package com.example.myapplication;
+
+import android.os.Bundle;
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextBaseA;
+    private EditText editTextBaseB;
+    private EditText editTextHeight;
+    private Button buttonCalculate;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+
+        // Инициализация UI элементов
+        editTextBaseA = findViewById(R.id.editTextBaseA);
+        editTextBaseB = findViewById(R.id.editTextBaseB);
+        editTextHeight = findViewById(R.id.editTextHeight);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateTrapezoidArea();
+            }
+        });
+    }
+
+    private void calculateTrapezoidArea() {
+        String strBaseA = editTextBaseA.getText().toString();
+        String strBaseB = editTextBaseB.getText().toString();
+        String strHeight = editTextHeight.getText().toString();
+
+        if (strBaseA.isEmpty() || strBaseB.isEmpty() || strHeight.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите оба основания и высоту.");
+            return;
+        }
+
+        try {
+            double baseA = Double.parseDouble(strBaseA);
+            double baseB = Double.parseDouble(strBaseB);
+            double height = Double.parseDouble(strHeight);
+
+            if (baseA <= 0 || baseB <= 0 || height <= 0) {
+                textViewResult.setText("Результат: Основания и высота должны быть положительными числами.");
+                return;
+            }
+
+            // Вычисление площади трапеции
+            double area = ((baseA + baseB) / 2) * height;
+
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь трапеции = %.2f", area));
+
+        } catch (NumberFormatException e) {
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+        }
+    }
+}
+```

@@ -14,9 +14,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editTextSideA_Task16;
-    private EditText editTextSideB_Task16;
-    private EditText editTextAngleDegrees;
+    private EditText editTextSideA_Task17;
+    private EditText editTextSideB_Task17;
+    private EditText editTextSideC_Task17;
     private Button buttonCalculate;
     private TextView textViewResult;
 
@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Инициализация UI элементов
-        editTextSideA_Task16 = findViewById(R.id.editTextSideA_Task16);
-        editTextSideB_Task16 = findViewById(R.id.editTextSideB_Task16);
-        editTextAngleDegrees = findViewById(R.id.editTextAngleDegrees);
+        editTextSideA_Task17 = findViewById(R.id.editTextSideA_Task17);
+        editTextSideB_Task17 = findViewById(R.id.editTextSideB_Task17);
+        editTextSideC_Task17 = findViewById(R.id.editTextSideC_Task17);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         textViewResult = findViewById(R.id.textViewResult);
 
@@ -42,42 +42,56 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateTriangleAreaBySidesAndAngle();
+                calculateCircumcircleRadius();
             }
         });
     }
 
-    private void calculateTriangleAreaBySidesAndAngle() {
-        String strSideA = editTextSideA_Task16.getText().toString();
-        String strSideB = editTextSideB_Task16.getText().toString();
-        String strAngle = editTextAngleDegrees.getText().toString();
+    private double calculateHeronArea(double sA, double sB, double sC) {
+        // Проверка неравенства треугольника
+        if (sA + sB <= sC || sA + sC <= sB || sB + sC <= sA) {
+            return -1; // Ошибка: стороны не образуют треугольник
+        }
+        double p = (sA + sB + sC) / 2.0; // Полупериметр
+        double areaSquared = p * (p - sA) * (p - sB) * (p - sC);
+        if (areaSquared < 0) return -1; // Может произойти из-за ошибок округления, если стороны близки к вырожденному случаю
+        return Math.sqrt(areaSquared);
+    }
 
-        if (strSideA.isEmpty() || strSideB.isEmpty() || strAngle.isEmpty()) {
-            textViewResult.setText("Результат: Пожалуйста, введите обе стороны и угол.");
+    private void calculateCircumcircleRadius() {
+        String strSideA = editTextSideA_Task17.getText().toString();
+        String strSideB = editTextSideB_Task17.getText().toString();
+        String strSideC = editTextSideC_Task17.getText().toString();
+
+        if (strSideA.isEmpty() || strSideB.isEmpty() || strSideC.isEmpty()) {
+            textViewResult.setText("Результат: Пожалуйста, введите все три стороны.");
             return;
         }
 
         try {
             double a = Double.parseDouble(strSideA);
             double b = Double.parseDouble(strSideB);
-            double angleDegrees = Double.parseDouble(strAngle);
+            double c = Double.parseDouble(strSideC);
 
-            if (a <= 0 || b <= 0) {
+            if (a <= 0 || b <= 0 || c <= 0) {
                 textViewResult.setText("Результат: Длины сторон должны быть положительными числами.");
                 return;
             }
-            if (angleDegrees <= 0 || angleDegrees >= 180) {
-                textViewResult.setText("Результат: Угол должен быть больше 0 и меньше 180 градусов.");
+
+            double area = calculateHeronArea(a, b, c);
+
+            if (area <= 0) { // <=0 включает -1 от heronArea и возможный 0 для вырожденного треугольника
+                textViewResult.setText("Результат: С данными сторонами невозможно образовать треугольник или площадь равна нулю.");
                 return;
             }
 
-            double angleRadians = Math.toRadians(angleDegrees);
-            double area = 0.5 * a * b * Math.sin(angleRadians);
+            // R = (a * b * c) / (4 * S)
+            double radius = (a * b * c) / (4 * area);
 
-            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Площадь треугольника = %.2f", area));
+            textViewResult.setText(String.format(Locale.getDefault(), "Результат: Радиус описанной окружности R = %.2f", radius));
 
         } catch (NumberFormatException e) {
-            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения.");
+            textViewResult.setText("Результат: Пожалуйста, введите корректные числовые значения для сторон.");
         }
     }
 }

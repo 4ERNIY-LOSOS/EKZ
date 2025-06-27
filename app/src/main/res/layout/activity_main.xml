@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Задание 16: Площадь треугольника (2 стороны, угол)"
+        android:text="Задание 17: Радиус описанной окружности"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,7 +21,7 @@
         android:layout_marginTop="16dp"/>
 
     <EditText
-        android:id="@+id/editTextSideA_Task16"
+        android:id="@+id/editTextSideA_Task17"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Сторона a"
@@ -33,24 +33,24 @@
         android:autofillHints="number" />
 
     <EditText
-        android:id="@+id/editTextSideB_Task16"
+        android:id="@+id/editTextSideB_Task17"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Сторона b"
         android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task16"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideA_Task17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
         android:autofillHints="number" />
 
     <EditText
-        android:id="@+id/editTextAngleDegrees"
+        android:id="@+id/editTextSideC_Task17"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Угол γ (в градусах)"
+        android:hint="Сторона c"
         android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task16"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideB_Task17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
@@ -60,8 +60,8 @@
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Вычислить площадь"
-        app:layout_constraintTop_toBottomOf="@id/editTextAngleDegrees"
+        android:text="Вычислить радиус R"
+        app:layout_constraintTop_toBottomOf="@id/editTextSideC_Task17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="24dp"/>
